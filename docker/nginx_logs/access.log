@@ -1,2 +1,0 @@
-192.168.176.1 - - [10/Dec/2024:11:31:45 +0000] "GET / HTTP/1.1" 200 34115 "-" "Mozilla/5.0 (X11; Linux x86_64; rv:133.0) Gecko/20100101 Firefox/133.0"
-192.168.176.1 - - [10/Dec/2024:11:31:47 +0000] "GET /favicon.ico HTTP/1.1" 200 0 "http://colibry.my/" "Mozilla/5.0 (X11; Linux x86_64; rv:133.0) Gecko/20100101 Firefox/133.0"
