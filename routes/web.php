@@ -25,10 +25,12 @@ Route::inertia('/login', 'Login')->name('loginForm');
 Route::inertia('/register', 'Register')->name('registerForm');
 
 
-Route::controller(CabinetController::class)->group(function () {
+Route::controller(CabinetController::class)->middleware('auth')->group(function () {
     Route::get('/account', 'account')->name('account');
+    Route::put('/account', 'update')->name('account.update');
     Route::post('/upload-avatar', 'uploadAvatar')->name('upload.avatar');
 });
 
-Route::resource('channels', ChannelController::class);
+
+Route::resource('channels', ChannelController::class)->middleware('auth');
 

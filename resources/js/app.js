@@ -5,6 +5,10 @@ import { Ziggy } from './ziggy.js';
 import '../css/app.css';
 import DefaultLayout from './Layouts/DefaultLayout.vue';
 import clickOutsideDirective from '@/directives/clickOutsideDirective.js';
+import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import '@vueup/vue-quill/dist/vue-quill.bubble.css';
+
 createInertiaApp({
     resolve: name => {
         const pages = import.meta.glob('./Pages/**/*.vue', { eager: true })
@@ -16,7 +20,7 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         createApp({ render: () => h(App, props) })
             .use(plugin)
-            .use(ZiggyVue, Ziggy)
+            .use(ZiggyVue, Ziggy, QuillEditor)
             .directive('click-outside', clickOutsideDirective) // v-click-outside="isOpen=false"
             .mount(el);
     },

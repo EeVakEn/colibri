@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AccountUpdateRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -35,8 +36,9 @@ class CabinetController extends Controller
         return response()->json(['path' => $path], 201);
     }
 
-    public function update(Request $request)
+    public function update(AccountUpdateRequest $request): InertiaResponse
     {
-
+        auth()->user()->update($request->validated());
+        return Inertia::render('Cabinet/Account');
     }
 }

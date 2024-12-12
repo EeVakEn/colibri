@@ -10,7 +10,7 @@
     <main class="container-full mx-auto">
         <div class="flex flex-row">
             <Sidebar></Sidebar>
-            <div class="py-8">
+            <div class="py-8 container">
                 <slot/>
             </div>
         </div>

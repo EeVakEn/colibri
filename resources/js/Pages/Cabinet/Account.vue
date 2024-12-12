@@ -1,8 +1,11 @@
 <script setup>
-import { ref } from "vue";
-import { usePage } from '@inertiajs/vue3';
+import { ref, reactive } from "vue";
+import { usePage, router } from '@inertiajs/vue3';
+import moment from "moment";
 import axios from "axios";
 import Avatar from "@/UI/Avatar.vue";
+import Modal from "@/UI/Modal.vue";
+import {QuillEditor} from "@vueup/vue-quill";
 
 const page = usePage();
 
@@ -10,10 +13,10 @@ const avatarInputRef = ref(null);
 const loading = ref(false);
 const error = ref(null);
 const successMessage = ref(null);
+const isEditModalOpen = ref(false);
 
-const form = ref({
+const form = reactive({
     name: page.props.user.name,
-    email: page.props.user.email,
     description: page.props.user.description,
 });
 
@@ -47,20 +50,9 @@ const onAvatarChange = async (e) => {
     }
 };
 
-const onSave = async () => {
-    try {
-        loading.value = true;
-        error.value = null;
-        successMessage.value = null;
-
-        await axios.put(route('user.update'), form.value);
-
-        successMessage.value = "Profile updated successfully!";
-    } catch (e) {
-        error.value = e.response?.data?.message || e.message;
-    } finally {
-        loading.value = false;
-    }
+const onSave = () => {
+    router.put(route('account.update'), form)
+    isEditModalOpen.value = false
 };
 </script>
 
@@ -73,81 +65,89 @@ export default {
 </script>
 
 <template>
-    <h1 class="text-2xl font-bold mb-6">Edit Account</h1>
+    <h1 class="text-2xl font-bold mb-6">Account</h1>
     <div class="flex flex-col items-center">
         <!-- Avatar -->
-        <div
-            class="relative cursor-pointer group w-32 h-32 rounded-full "
-            @click="onAvatarClick"
-        >
-            <!-- Avatar Image -->
-            <Avatar
-                :user="page.props.user"
-                class-name="w-full h-full rounded-full overflow-hidden"
-            />
+        <div class="flex">
+            <div class="w-[300px]">
+                <div
+                    class="relative cursor-pointer group w-32 h-32 rounded-full "
+                    @click="onAvatarClick"
+                >
+                    <!-- Avatar Image -->
+                    <Avatar
+                        :user="page.props.user"
+                        class-name="w-full h-full rounded-full overflow-hidden"
+                    />
 
-            <!-- Overlay -->
-            <div
-                class="w-full h-full rounded-full absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-            >
-                <span class="text-white font-semibold">Load Photo</span>
+                    <!-- Overlay -->
+                    <div
+                        class="w-full h-full rounded-full absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    >
+                        <span class="text-white font-semibold">Load Photo</span>
+                    </div>
+                </div>
+
+                <!-- Hidden File Input -->
+                <input
+                    type="file"
+                    ref="avatarInputRef"
+                    accept="image/*"
+                    class="hidden"
+                    @change="onAvatarChange"
+                />
+
+                <!-- Loading and Error Messages -->
+                <p v-if="loading" class="text-gray-500 mt-4">Uploading...</p>
+                <p v-if="error" class="text-red-500 mt-4">{{ error }}</p>
             </div>
+            <div class="w-auto">
+                <p class="font-bold text-xl"> {{ page.props.user.name}} </p>
+                <p class="font-light text-sm"> {{ page.props.user.email}} </p>
+                <div class="mt-4" v-if="page.props.user.description" v-html="page.props.user.description"/>
+
+                <p class="font-light text-sm mt-7">Created: {{ moment(page.props.user.created_at).format('Do MMM YYYY')}} </p>
+                <button @click="isEditModalOpen=true" class="btn-primary mt-5">Edit</button>
+            </div>
+
         </div>
 
-        <!-- Hidden File Input -->
-        <input
-            type="file"
-            ref="avatarInputRef"
-            accept="image/*"
-            class="hidden"
-            @change="onAvatarChange"
-        />
-
-        <!-- Loading and Error Messages -->
-        <p v-if="loading" class="text-gray-500 mt-4">Uploading...</p>
-        <p v-if="error" class="text-red-500 mt-4">{{ error }}</p>
 
         <!-- Form -->
-        <form @submit.prevent="onSave" class="w-full max-w-md mt-6">
-            <div class="mb-4">
-                <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
-                <input
-                    id="name"
-                    type="text"
-                    v-model="form.name"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                />
-            </div>
+        <Modal v-model="isEditModalOpen">
+            <form @submit.prevent="onSave" class="w-full max-w-md mt-6">
+                <div class="mb-4">
+                    <label
+                        for="name"
+                        class="input-label"
+                    >
+                        Name
+                    </label>
+                    <input
+                        type="text"
+                        id="name"
+                        class="input-field"
+                        v-model="form.name"
+                        placeholder="name"
+                    />
 
-            <div class="mb-4">
-                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                <input
-                    id="email"
-                    type="email"
-                    v-model="form.email"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                />
-            </div>
+                </div>
+                <div class="mb-4">
+                    <label for="description" class="input-label">Description</label>
+                    <QuillEditor theme="bubble" class="input-field p-0" contentType="html" v-model:content="form.description" />
+                </div>
 
-            <div class="mb-4">
-                <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-                <textarea
-                    id="description"
-                    v-model="form.description"
-                    rows="4"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                ></textarea>
-            </div>
+                <div class="flex items-center justify-between">
+                    <button
+                        type="submit"
+                        class="btn-primary mt-5 float-right"
+                    >
+                        Save
+                    </button>
+                    <p v-if="successMessage" class="text-green-500">{{ successMessage }}</p>
+                </div>
+            </form>
+        </Modal>
 
-            <div class="flex items-center justify-between">
-                <button
-                    type="submit"
-                    class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                >
-                    Save
-                </button>
-                <p v-if="successMessage" class="text-green-500">{{ successMessage }}</p>
-            </div>
-        </form>
     </div>
 </template>
