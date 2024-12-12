@@ -27,6 +27,7 @@ Route::inertia('/register', 'Register')->name('registerForm');
 
 Route::controller(CabinetController::class)->group(function () {
     Route::get('/account', 'account')->name('account');
+    Route::post('/upload-avatar', 'uploadAvatar')->name('upload.avatar');
 });
 
 Route::resource('channels', ChannelController::class);

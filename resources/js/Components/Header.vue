@@ -42,7 +42,7 @@
                                 </div>
                             </div>
                         </Link>
-                        <Link href="#channels" class="group cursor-pointer block hover:bg-gray-100 bg-transparent rounded p-1" >
+                        <Link :href="route('channels.index')" class="group cursor-pointer block hover:bg-gray-100 bg-transparent rounded p-1" >
                             <CircleUserRound class="mr-2 inline"/>
                             <span>Channels</span>
                         </Link>
