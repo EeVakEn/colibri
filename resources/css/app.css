@@ -16,4 +16,8 @@
         @apply w-full px-2 py-1 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent;
     }
 
+    .hover-li{
+        @apply cursor-pointer block hover:bg-gray-100 bg-transparent rounded p-1;
+    }
+
 }

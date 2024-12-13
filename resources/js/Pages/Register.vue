@@ -1,6 +1,7 @@
 <script setup>
-import { Link, useForm } from '@inertiajs/vue3';
-import { route } from "ziggy-js";
+import {Link, useForm} from '@inertiajs/vue3';
+import {route} from "ziggy-js";
+import Logo from "@/UI/Logo.vue";
 
 const form = useForm({
     name: '',
@@ -23,8 +24,10 @@ export default {
 </script>
 
 <template>
-    <div class="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="h-screen w-screen flex items-center justify-center ">
         <div class="max-w-md w-full space-y-8">
+            <Logo class="justify-center"></Logo>
+
             <div>
                 <h2 class="mt-6 text-center text-lg font-extrabold text-gray-900">
                     Registration
@@ -34,6 +37,7 @@ export default {
             <form @submit.prevent="register" class="mt-8 space-y-6">
                 <!-- Name -->
                 <div>
+                    <label for="name" class="input-label">Name</label>
                     <input
                         v-model="form.name"
                         id="name"
@@ -41,7 +45,7 @@ export default {
                         type="text"
                         placeholder="Name"
                         :class="{'border-red-500': form.errors.name}"
-                        class="appearance-none rounded relative block w-full px-3 py-2 border placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        class="input-field"
                     />
                     <div v-if="form.errors.name" class="text-red-500 text-sm">
                         {{ form.errors.name }}
@@ -50,6 +54,7 @@ export default {
 
                 <!-- Email -->
                 <div>
+                    <label for="email" class="input-label">Email</label>
                     <input
                         v-model="form.email"
                         id="email"
@@ -57,7 +62,7 @@ export default {
                         type="email"
                         placeholder="E-mail"
                         :class="{'border-red-500': form.errors.email}"
-                        class="appearance-none rounded relative block w-full px-3 py-2 border placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        class="input-field"
                     />
                     <div v-if="form.errors.email" class="text-red-500 text-sm">
                         {{ form.errors.email }}
@@ -66,6 +71,7 @@ export default {
 
                 <!-- Password -->
                 <div>
+                    <label for="password" class="input-label">Password</label>
                     <input
                         v-model="form.password"
                         id="password"
@@ -73,7 +79,7 @@ export default {
                         type="password"
                         placeholder="Password"
                         :class="{'border-red-500': form.errors.password}"
-                        class="appearance-none rounded relative block w-full px-3 py-2 border placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        class="input-field"
                     />
                     <div v-if="form.errors.password" class="text-red-500 text-sm">
                         {{ form.errors.password }}
@@ -82,6 +88,7 @@ export default {
 
                 <!-- Password Confirmation -->
                 <div>
+                    <label for="password_confirmation" class="input-label">Password Again</label>
                     <input
                         v-model="form.password_confirmation"
                         id="password_confirmation"
@@ -89,7 +96,7 @@ export default {
                         type="password"
                         placeholder="Confirm password"
                         :class="{'border-red-500': form.errors.password_confirmation}"
-                        class="appearance-none rounded relative block w-full px-3 py-2 border placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        class="input-field"
                     />
                     <div v-if="form.errors.password_confirmation" class="text-red-500 text-sm">
                         {{ form.errors.password_confirmation }}
@@ -105,6 +112,9 @@ export default {
                     >
                         Register
                     </button>
+                </div>
+                <div class="mx-auto text-center mt-2">
+                    <Link :href="route('login')">Sign In</Link>
                 </div>
             </form>
         </div>

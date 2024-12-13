@@ -21,19 +21,19 @@ function isActive(rt) {
                 :link="route('account')"
                 icon="circle-user-round"
                 :class="{'font-bold':isActive('account')}"
-                class=" cursor-pointer block hover:bg-gray-100 bg-transparent rounded p-1"
+                class="hover-li"
             >
                 Account
             </LinkWithIcon>
             <LinkWithIcon
                 :link="route('channels.index')"
                 icon="video"
-                class=" cursor-pointer block hover:bg-gray-100 bg-transparent rounded p-1"
+                class="hover-li"
                 :class="{'font-bold':isActive('channels.index')}"
             >
                 Channels
             </LinkWithIcon>
-            <a class="group cursor-pointer block hover:bg-red-100 bg-transparent rounded p-1"  @click="logout">
+            <a class="group hover-li hover:bg-red-100"  @click="logout">
                 <DoorClosed class="mr-2 inline group-hover:hidden"/>
                 <DoorOpen class="mr-2 hidden group-hover:inline"/>
                 <span>Logout</span>

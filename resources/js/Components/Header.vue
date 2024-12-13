@@ -12,7 +12,7 @@
                 <input
                     type="search"
                     placeholder="Search..."
-                    class="w-full pl-8 pr-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    class="input-field pl-7"
                 />
             </div>
         </div>
@@ -22,7 +22,7 @@
             <Link
                 v-if="!$page.props.user"
                 :href="route('loginForm')"
-                class="flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+                class="btn-primary"
             >
                 <LogIn class="mr-2 h-4 w-4" />
                 Login
@@ -42,16 +42,16 @@
                                 </div>
                             </div>
                         </Link>
-                        <Link :href="route('channels.index')" class="group cursor-pointer block hover:bg-gray-100 bg-transparent rounded p-1" >
+                        <Link :href="route('channels.index')" class="hover-li" >
                             <CircleUserRound class="mr-2 inline"/>
                             <span>Channels</span>
                         </Link>
-                        <Link href="#wallet" class="group cursor-pointer block hover:bg-gray-100 bg-transparent rounded p-1" >
+                        <Link href="#wallet" class="hover-li" >
                             <Wallet class="mr-2 inline"/>
                             <span>Wallet</span>
                             <span class="rounded float-right bg-[#1763F6] text-white font-medium px-2">$0</span>
                         </Link>
-                        <a class="group cursor-pointer block hover:bg-red-100 bg-transparent rounded p-1"  @click="logout">
+                        <a class="group hover-li hover:bg-red-100 "  @click="logout">
                             <DoorClosed class="mr-2 inline group-hover:hidden"/>
                             <DoorOpen class="mr-2 hidden group-hover:inline"/>
                             <span>Logout</span>

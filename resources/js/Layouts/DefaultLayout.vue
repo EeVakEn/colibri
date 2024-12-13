@@ -1,16 +1,14 @@
 <template>
-    <p v-if="$page.props.message" class="bg-indigo-600 h-10 flex items-center justify-center text-sm font-medium text-white px-4 sm:px-6 lg:px-8">
-        {{ $page.props.message }}
-    </p>
+    <top-message/>
 
     <!-- Header -->
-    <Header :user="user"></Header>
+    <Header :user="page.props.user"></Header>
 
     <!-- Main Content -->
     <main class="container-full mx-auto">
-        <div class="flex flex-row">
+        <div class="flex flex-row gap-10">
             <Sidebar></Sidebar>
-            <div class="py-8">
+            <div class="container">
                 <slot/>
             </div>
         </div>
@@ -24,11 +22,7 @@
 import Header from "@/Components/Header.vue";
 import Footer from "@/Components/Footer.vue";
 import Sidebar from "@/Components/Sidebar.vue";
-
-const props = defineProps({
-    user: {
-        type: Object,
-        required: true
-    }
-})
+import {usePage} from "@inertiajs/vue3";
+import TopMessage from "@/UI/TopMessage.vue";
+const page = usePage();
 </script>

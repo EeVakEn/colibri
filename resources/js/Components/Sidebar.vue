@@ -15,6 +15,7 @@ function isActive(rt) {
             <LinkWithIcon
                 :link="route('videos')"
                 icon="video"
+                class="hover-li"
                 :class="{'font-bold':isActive('videos')}"
             >
                 Video
@@ -22,6 +23,7 @@ function isActive(rt) {
             <LinkWithIcon
                 :link="route('articles')"
                 icon="newspaper"
+                class="hover-li"
                 :class="{'font-bold':isActive('articles')}"
             >
                 Articles

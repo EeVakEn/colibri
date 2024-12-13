@@ -5,6 +5,7 @@ use App\Http\Controllers\CabinetController;
 use App\Http\Controllers\ChannelController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 
 Route::controller(HomeController::class)
@@ -16,13 +17,17 @@ Route::controller(HomeController::class)
 Route::controller(AuthController::class)
     ->middleware('guest')
     ->group(function () {
-        Route::post('/register', 'register')->name('register');
+        Route::inertia('/login', 'Login')->name('loginForm');
         Route::post('/login', 'login')->name('login');
-    });
+        Route::inertia('/register', 'Register')->name('registerForm');
+        Route::post('/register', 'register')->name('register');
+        Route::inertia('/forgot-password', 'ForgotPassword')->name('forgotPasswordForm');
+        Route::post('/forgot-password', 'forgotPassword')->name('forgotPassword');
+        Route::get('/reset-password', 'resetPasswordForm')->name('resetPasswordForm');
 
+    });
+Route::post('/reset-password', [AuthController::class,'resetPassword'])->name('password.reset');
 Route::delete('/logout', [AuthController::class, 'logout'])->name('logout');
-Route::inertia('/login', 'Login')->name('loginForm');
-Route::inertia('/register', 'Register')->name('registerForm');
 
 
 Route::controller(CabinetController::class)->middleware('auth')->group(function () {
@@ -30,7 +35,6 @@ Route::controller(CabinetController::class)->middleware('auth')->group(function 
     Route::put('/account', 'update')->name('account.update');
     Route::post('/upload-avatar', 'uploadAvatar')->name('upload.avatar');
 });
-
 
 Route::resource('channels', ChannelController::class)->middleware('auth');
 

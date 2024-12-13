@@ -17,7 +17,7 @@
                 class="absolute top-3 right-3 text-gray-600 hover:text-gray-900"
                 @click="close"
             >
-                &times;
+                <X/>
             </button>
 
             <!-- Slot for modal content -->
@@ -28,6 +28,7 @@
 
 <script setup>
 import { ref, watch, defineEmits, defineProps } from 'vue';
+import { X } from  'lucide-vue-next'
 
 // Props and emits
 const props = defineProps({

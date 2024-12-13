@@ -10,7 +10,9 @@ export default {
 }
 </script>
 <template>
-Channels
+<div>
+
+</div>
 </template>
 
 <style scoped>

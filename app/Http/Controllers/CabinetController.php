@@ -13,7 +13,7 @@ class CabinetController extends Controller
 {
     public function account(): InertiaResponse
     {
-        return Inertia::render('Cabinet/Account');
+        return Inertia::render('Cabinet/Account')->with(['message'=>'hi']);
     }
 
     public function uploadAvatar(Request $request): JsonResponse
@@ -39,6 +39,6 @@ class CabinetController extends Controller
     public function update(AccountUpdateRequest $request): InertiaResponse
     {
         auth()->user()->update($request->validated());
-        return Inertia::render('Cabinet/Account');
+        return Inertia::render('Cabinet/Account')->with(['message'=>'Successfully updated']);
     }
 }
