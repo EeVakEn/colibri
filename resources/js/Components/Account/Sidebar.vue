@@ -18,18 +18,18 @@ function isActive(rt) {
     <aside class="max-w-[200px] w-[200px] py-8 border-r-1">
         <div class="flex flex-col gap-2 px-4">
             <LinkWithIcon
-                :link="route('account')"
+                :link="route('account.index')"
                 icon="circle-user-round"
-                :class="{'font-bold':isActive('account')}"
+                :class="{'font-bold':isActive('account.index')}"
                 class="hover-li"
             >
                 Account
             </LinkWithIcon>
             <LinkWithIcon
-                :link="route('channels.index')"
+                :link="route('account.channels.index')"
                 icon="video"
                 class="hover-li"
-                :class="{'font-bold':isActive('channels.index')}"
+                :class="{'font-bold':isActive('account.channels.index')}"
             >
                 Channels
             </LinkWithIcon>

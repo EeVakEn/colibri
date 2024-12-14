@@ -8,7 +8,7 @@
     <main class="container-full mx-auto">
         <div class="flex flex-row  gap-10">
             <Sidebar></Sidebar>
-            <div class="py-8 container">
+            <div class="py-8 px-4 container">
                 <slot/>
             </div>
         </div>
@@ -21,7 +21,7 @@
 <script setup>
 import Header from "@/Components/Header.vue";
 import Footer from "@/Components/Footer.vue";
-import Sidebar from "@/Components/Cabinet/Sidebar.vue";
+import Sidebar from "@/Components/Account/Sidebar.vue";
 
 import {usePage} from "@inertiajs/vue3";
 import TopMessage from "@/UI/TopMessage.vue";

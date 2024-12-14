@@ -4,16 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AccountUpdateRequest;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 
-class CabinetController extends Controller
+class AccountController extends Controller
 {
     public function account(): InertiaResponse
     {
-        return Inertia::render('Cabinet/Account')->with(['message'=>'hi']);
+        return Inertia::render('Account/Index');
     }
 
     public function uploadAvatar(Request $request): JsonResponse
@@ -39,6 +40,6 @@ class CabinetController extends Controller
     public function update(AccountUpdateRequest $request): InertiaResponse
     {
         auth()->user()->update($request->validated());
-        return Inertia::render('Cabinet/Account')->with(['message'=>'Successfully updated']);
+        return Inertia::render('Account/Index')->with(['message'=>'Successfully updated']);
     }
 }

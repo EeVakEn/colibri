@@ -89,6 +89,6 @@ class AuthController extends Controller
             'token' => 'required',
             'email' => 'required|email',
         ]);
-        return Inertia::render('ResetPassword', ['token' => $validated['token'], 'email' => $validated['email']]);
+        return Inertia::render('Auth/ResetPassword', ['token' => $validated['token'], 'email' => $validated['email']]);
     }
 }

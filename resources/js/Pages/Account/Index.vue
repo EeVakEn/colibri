@@ -36,7 +36,7 @@ const onAvatarChange = async (e) => {
             loading.value = true;
             error.value = null;
 
-            const response = await axios.post(route('upload.avatar'), formData, {
+            const response = await axios.post(route('account.upload.avatar'), formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -57,10 +57,10 @@ const onSave = () => {
 </script>
 
 <script>
-import CabinetLayout from "@/Layouts/CabinetLayout.vue";
+import AccountLayout from "@/Layouts/AccountLayout.vue";
 
 export default {
-    layout: CabinetLayout,
+    layout: AccountLayout,
 };
 </script>
 

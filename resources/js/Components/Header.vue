@@ -33,7 +33,7 @@
                         <Avatar :user="user"/>
                     </template>
                     <div class="p-2 flex flex-col gap-2 rounded-2">
-                        <Link :href="route('account')">
+                        <Link :href="route('account.index')">
                             <div class="flex flex-row items-center">
                                 <Avatar :user="user" class="mr-2"/>
                                 <div class="flex flex-col">
@@ -42,7 +42,7 @@
                                 </div>
                             </div>
                         </Link>
-                        <Link :href="route('channels.index')" class="hover-li" >
+                        <Link :href="route('account.channels.index')" class="hover-li" >
                             <CircleUserRound class="mr-2 inline"/>
                             <span>Channels</span>
                         </Link>
