@@ -32,8 +32,8 @@
                     <template #button>
                         <Avatar :user="user"/>
                     </template>
-                    <div class="p-2 flex flex-col gap-2 rounded-2">
-                        <Link :href="route('account.index')">
+                    <div class="p-4 flex flex-col gap-2 rounded-2">
+                        <Link :href="route('account.index')" class="mb-2">
                             <div class="flex flex-row items-center">
                                 <Avatar :user="user" class="mr-2"/>
                                 <div class="flex flex-col">
@@ -51,10 +51,10 @@
                             <span>Wallet</span>
                             <span class="rounded float-right bg-[#1763F6] text-white font-medium px-2">$0</span>
                         </Link>
-                        <a class="group hover-li hover:bg-red-100 "  @click="logout">
-                            <DoorClosed class="mr-2 inline group-hover:hidden"/>
-                            <DoorOpen class="mr-2 hidden group-hover:inline"/>
-                            <span>Logout</span>
+                        <a class="group hover-li hover:bg-red-100"  @click="logout">
+                            <DoorClosed class="inline group-hover:hidden"/>
+                            <DoorOpen class="hidden group-hover:inline"/>
+                            <span class="text-medium ml-2">Logout</span>
                         </a>
                     </div>
                 </Dropdown>

@@ -1,21 +1,20 @@
 <template>
     <top-message/>
+    <div class="flex flex-col min-h-screen divide-y divide-slate-300">
+        <!-- Header -->
+        <Header :user="page.props.user"></Header>
 
-    <!-- Header -->
-    <Header :user="page.props.user"></Header>
-
-    <!-- Main Content -->
-    <main class="container-full mx-auto">
-        <div class="flex flex-row  gap-10">
-            <Sidebar></Sidebar>
+        <!-- Main Content -->
+        <main class="flex-grow container-full flex flex-row">
+            <Sidebar class="border-slate-100 border-r-2"/>
             <div class="py-8 px-4 w-full">
                 <slot/>
             </div>
-        </div>
-    </main>
+        </main>
 
-    <!-- Footer -->
-    <Footer></Footer>
+        <!-- Footer -->
+        <Footer></Footer>
+    </div>
 </template>
 
 <script setup>
@@ -25,5 +24,6 @@ import Sidebar from "@/Components/Account/Sidebar.vue";
 
 import {usePage} from "@inertiajs/vue3";
 import TopMessage from "@/UI/TopMessage.vue";
+
 const page = usePage();
 </script>

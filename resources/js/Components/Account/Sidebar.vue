@@ -35,11 +35,11 @@ function isActive(rt) {
             >
                 Channels
             </LinkWithIcon>
-            <a class="group hover-li hover:bg-red-100"  @click="logout">
-                <DoorClosed class="mr-2 inline group-hover:hidden"/>
-                <DoorOpen class="mr-2 hidden group-hover:inline"/>
-                <span>Logout</span>
-            </a>
+            <Link class="group hover-li hover:bg-red-100"  @click="logout">
+                <DoorClosed size="16" class="mr-2 inline group-hover:hidden"/>
+                <DoorOpen size="16" class="mr-2 hidden group-hover:inline"/>
+                Logout
+            </Link>
         </div>
     </aside>
 </template>

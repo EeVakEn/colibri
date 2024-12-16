@@ -31,7 +31,7 @@ export default {
             </div>
 
         </div>
-        <LinkWithIcon class="btn-primary" size="md" icon="diamond-plus" :link="route('account.channels.index')">Add Content</LinkWithIcon>
+        <LinkWithIcon class="btn-primary" size="md" icon="diamond-plus" :link="route('contents.create', {channel_id:channel.id})">Add Content</LinkWithIcon>
     </div>
 
     <hr class="border-2">

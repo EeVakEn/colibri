@@ -1,6 +1,8 @@
 <template>
-    <footer class="container mx-auto text-center">
-        <p>&copy; {{moment().format('Y')}} Colibri. All rights reserved.</p>
+    <footer>
+        <div class="mx-auto container text-center">
+            <p>&copy; {{moment().format('Y')}} Colibri. All rights reserved.</p>
+        </div>
     </footer>
 </template>
 

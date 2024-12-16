@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\ChannelController;
+use App\Http\Controllers\ContentController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -37,6 +38,8 @@ Route::prefix('account')->name('account.')->middleware(['auth'])->group(function
     });
     Route::resource('channels', ChannelController::class)->middleware('auth');
 });
+Route::resource('contents', ContentController::class)->middleware('auth')->except(['index']);
+
 
 
 

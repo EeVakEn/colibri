@@ -134,7 +134,7 @@ defineExpose({
                         <label :for=filter.name class="text-sm font-medium text-gray-700">{{filter.label}}</label>
                         <select
                             v-model="filters[filter.name]"
-                            class="select-field"
+                            class="select-field min-w-[200px]"
                             :id="filter.name"
                         >
                             <option v-for="value in filter.options" :value="value['value']" :key="value['value']">{{ value['text'] }}

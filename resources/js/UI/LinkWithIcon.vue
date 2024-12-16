@@ -16,7 +16,7 @@ const props = defineProps({
     },
     size: {
         type: String,
-        default: 'xl'
+        default: 'medium'
     }
 })
 </script>
