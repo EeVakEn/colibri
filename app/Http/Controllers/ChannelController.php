@@ -60,32 +60,48 @@ class ChannelController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Channel $channel)
+    public function show(Channel $channel): InertiaResponse
     {
-        //
+        return Inertia::render('Account/Channels/Show', [
+            'channel' => $channel,
+            'subsCount' => $channel->subscriptions()->count()
+        ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Channel $channel)
+    public function edit(Channel $channel): InertiaResponse
     {
-        //
+        return Inertia::render('Account/Channels/Edit', [
+            'channel' => $channel,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateChannelRequest $request, Channel $channel)
+    public function update(StoreChannelRequest $request, Channel $channel): RedirectResponse
     {
-        //
+        $validated = $request->validated();
+        if ($request->hasFile('avatar')) {
+            Storage::disk('public')->delete(str_replace( '/storage', '', $channel->avatar));
+            $ext = $request->file('avatar')->getClientOriginalExtension();
+            $time = time();
+            $path = "/channel/avatar/$time.$ext";
+            Storage::disk('public')->put($path, $request->file('avatar')->getContent());
+            $validated['avatar'] = '/storage'. $path;
+        }
+        $channel->update($validated);
+        return redirect()->route('account.channels.index')->with('message', 'Channel updated.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Channel $channel)
+    public function destroy(Channel $channel): RedirectResponse
     {
-        //
+        $channel->delete();
+        return redirect()->route('account.channels.index')->with('message', 'Channel deleted.');
     }
 }

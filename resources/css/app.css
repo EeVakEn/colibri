@@ -1,7 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+.fade-enter-active {
+    transition: opacity 0.5s ease;
+}
 
+.fade-leave-active{
+    transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
 
 @layer components {
     .btn-primary {
@@ -17,7 +28,7 @@
     }
 
     .select-field {
-        @apply mt-2 w-full rounded-lg border-gray-300 text-gray-700 px-2 py-2 bg-white;
+        @apply mt-2 min-w-[200px] rounded-lg focus:ring-1 focus:ring-indigo-600 border border-gray-300 text-gray-700 px-2 py-2 bg-white;
     }
 
     .hover-li{
@@ -25,3 +36,49 @@
     }
 
 }
+
+
+/* Tabs Component Wrapper */
+.tabs-component {
+    @apply mx-auto mt-8;
+}
+
+/* Tabs Navigation (Ul) */
+.tabs-component-tabs {
+    @apply flex gap-2 mb-6;
+}
+
+/* Tab Item (Li) */
+.tabs-component-tab {
+    @apply cursor-pointer transition duration-200 ease-in-out;
+}
+
+.tabs-component-tab a {
+    @apply block py-1 px-2 font-medium;
+}
+
+/* Disabled Tab */
+.tabs-component-tab.is-disabled a {
+    @apply cursor-not-allowed text-gray-400 opacity-70;
+}
+
+/* Active Tab */
+.tabs-component-tab.is-active a {
+    @apply ring-2 rounded-lg ring-indigo-700 text-indigo-700 font-semibold;
+}
+
+/* Inactive Tab */
+.tabs-component-tab.is-inactive a {
+    @apply text-gray-600 hover:text-indigo-700;
+}
+
+/* Tab Panels Wrapper */
+.tabs-component-panels {
+    @apply mt-4;
+}
+
+/* Active Tab Panel */
+.tabs-component-tab.is-active ~ .tabs-component-panels .tabs-component-panel {
+    @apply block;
+}
+

@@ -5,7 +5,9 @@ import {DoorClosed, DoorOpen} from "lucide-vue-next";
 import { router } from '@inertiajs/vue3'
 
 function logout(){
-    router.delete('/logout')
+    if (confirm('Are you sure to logout?')){
+        router.delete('/logout')
+    }
 }
 const page = usePage();
 function isActive(rt) {

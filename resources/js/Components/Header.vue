@@ -78,7 +78,9 @@ defineComponent({
 })
 
 function logout(){
-    router.delete('/logout')
+    if (confirm('Are you sure to logout?')){
+        router.delete('/logout')
+    }
 }
 
 // Define props

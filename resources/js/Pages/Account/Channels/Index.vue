@@ -1,17 +1,25 @@
 <script setup>
 import Table from "@/UI/Table.vue";
 
-import {reactive, defineComponent} from "vue";
-import {Link} from "@inertiajs/vue3";
-import {X, Check} from 'lucide-vue-next'
+import {defineComponent, useTemplateRef} from "vue";
+import {Link, router} from "@inertiajs/vue3";
+import {X, Check, ChevronDown} from 'lucide-vue-next'
 import Avatar from "@/UI/Avatar.vue";
-
+import Dropdown from "@/UI/Dropdown.vue";
+const tableRef = useTemplateRef('table');
 defineComponent({
     Link
 })
 const props = defineProps({
     tableMeta: Object
 })
+const deleteChannel = (url) => {
+    router.delete(url, {
+        onSuccess: function (){
+            tableRef.value.refresh()
+        }
+    })
+}
 </script>
 <script>
 import AccountLayout from "@/Layouts/AccountLayout.vue";
@@ -27,6 +35,7 @@ export default {
     </div>
 
     <Table
+        ref="table"
         :tableMeta="tableMeta"
     >
         <template #cell(avatar)="{data}">
@@ -38,6 +47,19 @@ export default {
         <template #cell(is_free)="{item}">
             <Check class="text-green-700" v-if="item"/>
             <X class="text-red-700" v-else/>
+        </template>
+        <template #cell(subscription_price)="{item}">
+            <b v-if="item">${{item}}</b>
+        </template>
+        <template #cell(actions)="{data}">
+            <Dropdown>
+                <template #button><b class="cursor-pointer">Actions <ChevronDown class="inline" :size="16"></ChevronDown></b></template>
+                <div class="m-2">
+                    <Link :href="route('account.channels.show', [data.id])" class="hover-li font-bold">Go to channel</Link>
+                    <Link :href="route('account.channels.edit', [data.id])" class="hover-li font-bold">Edit</Link>
+                    <Link @click="deleteChannel(route('account.channels.destroy', [data.id]))" class="hover-li hover:bg-red-100 font-bold">Delete</Link>
+                </div>
+            </Dropdown>
         </template>
     </Table>
 </template>

@@ -14,7 +14,9 @@ class StoreChannelRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:1024',
+            'avatar' => request()->method() == 'PUT'
+                ? 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:1024'
+                : 'required|image|mimes:jpeg,png,jpg,gif,svg|max:1024',
             'name' => 'required|string',
             'description' => 'nullable|string',
             'is_free' => 'nullable|boolean',

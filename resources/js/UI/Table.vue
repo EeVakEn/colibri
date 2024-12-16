@@ -1,5 +1,5 @@
 <script setup>
-import {ref, onBeforeMount, reactive, watch} from "vue";
+import {ref, onBeforeMount, reactive, watch, defineExpose} from "vue";
 import {ChevronsUpDown, ChevronDown, ChevronUp, ChevronRight, ChevronLeft, ListFilter} from 'lucide-vue-next';
 import axios from 'axios';
 
@@ -52,9 +52,9 @@ const buildQuery = () => {
 
     // Сортировка
     if (sort.sortBy) {
-        queryParams.push(`sortBy=${sort.sortBy}`);
+        queryParams.push(`sort_by=${sort.sortBy}`);
         if (sort.sortDesc) {
-            queryParams.push(`sortDesc=true`);
+            queryParams.push(`sort_desc=true`);
         }
     }
 
@@ -97,7 +97,6 @@ const sortBy = (column) => {
         // Если столбец тот же, меняем направление сортировки
         sort.sortDesc = !sort.sortDesc;
     }
-    console.log(sort.sortBy, sort.sortDesc);
 };
 // Изменение страницы
 const changePage = (newPage) => {
@@ -105,6 +104,13 @@ const changePage = (newPage) => {
         pagination.currentPage = newPage
     }
 };
+
+const refresh = async () => {
+    await fetchData(query.value);
+};
+defineExpose({
+    refresh,
+});
 </script>
 
 <template>
@@ -119,13 +125,13 @@ const changePage = (newPage) => {
             />
             <ListFilter class="cursor-pointer" v-if="props.tableMeta.filters.length" @click="isOpenFilter = !isOpenFilter" size="30"/>
         </div>
-        <transition>
+        <Transition name="fade">
             <div v-if="isOpenFilter" class="rounded-lg  border border-gray-200 px-4 py-2 my-2">
-                <h2>Filters</h2>
+                <h2 class="mb-3 font-bold">Filters</h2>
                 <!-- Панель фильтров -->
                 <div v-for="(filter, index) in props.tableMeta.filters" :key="index" class="flex items-center">
                     <div class="flex flex-col">
-                        <label for={filter.name} class="text-sm font-medium text-gray-700">{{filter.label}}</label>
+                        <label :for=filter.name class="text-sm font-medium text-gray-700">{{filter.label}}</label>
                         <select
                             v-model="filters[filter.name]"
                             class="select-field"
@@ -137,7 +143,7 @@ const changePage = (newPage) => {
                     </div>
                 </div>
             </div>
-        </transition>
+        </Transition>
 
 
 
@@ -145,14 +151,15 @@ const changePage = (newPage) => {
         <!-- Таблица -->
         <div class="rounded-lg border border-gray-200">
 
-            <div class="overflow-x-auto rounded-t-lg">
+            <div class="overflow-x-auto rounded-t-lg" style="overflow: visible">
             <table class="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
-                <thead class="ltr:text-left rtl:text-right">
+                <thead >
                 <tr class="bg-indigo-200">
                     <th
                         v-for="col in tableMeta.columns"
                         :key="col.field"
-                        class="whitespace-nowrap px-4 py-2 font-medium text-gray-900 cursor-pointer"
+                        class="whitespace-nowrap text-left px-4 py-2 font-medium text-gray-900"
+                        :class="col.sortable? 'cursor-pointer': ''"
                         @click="col.sortable && sortBy(col)"
                     >
                         {{ col.label }}
@@ -167,17 +174,20 @@ const changePage = (newPage) => {
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="row in data" :key="row.id" class="border-t">
-                    <td
-                        v-for="col in tableMeta.columns"
-                        :key="col.field"
-                        class="whitespace-nowrap px-4 py-2 text-gray-700"
-                    >
-                        <slot :name="`cell(${col.field})`" :item="row[col.field]" :data="row">
-                            {{ row[col.field] }}
-                        </slot>
-                    </td>
-                </tr>
+                <Transition v-for="row in data" name="fade">
+                    <tr :key="row.id" class="border-t">
+                        <td
+                            v-for="col in tableMeta.columns"
+                            :key="col.field"
+                            class="whitespace-nowrap px-4 py-2 text-gray-700"
+                        >
+                            <slot :name="`cell(${col.field})`" :item="row[col.field]" :data="row">
+                                {{ row[col.field] }}
+                            </slot>
+                        </td>
+                    </tr>
+                </Transition>
+
                 <tr v-if="data.length === 0">
                     <td :colspan="tableMeta.columns.length" class="text-center p-4 text-gray-500">
                         No data available.

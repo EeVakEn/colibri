@@ -21,12 +21,14 @@
         "@vitejs/plugin-vue": "^5.2.1",
         "@vue/server-renderer": "^3.5.13",
         "@vueup/vue-quill": "^1.2.0",
+        "human-format": "^1.2.1",
         "lucide-static": "^0.468.0",
         "lucide-vue-next": "^0.468.0",
         "moment": "^2.30.1",
         "vue": "^3.5.13",
         "vue-i18n": "^10.0.5",
         "vue3-table-lite": "^1.4.1",
+        "vue3-tabs-component": "^1.3.7",
         "vue3-toastify": "^0.2.5",
         "ziggy-js": "github:tightenco/ziggy"
     }

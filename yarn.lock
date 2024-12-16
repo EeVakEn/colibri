@@ -1023,6 +1023,11 @@ hasown@^2.0.2:
   dependencies:
     function-bind "^1.1.2"
 
+human-format@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/human-format/-/human-format-1.2.1.tgz#37a56cb46b0c5a84b5dd67740dd34638d71c0a67"
+  integrity sha512-o5Ldz62VWR5lYUZ8aVQaLKiN37NsHnmk3xjMoUjza3mGkk8MvMofgZT0T6HKSCKSJIir+AWk9Dx8KhxvZAUgCg==
+
 is-arguments@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/is-arguments/-/is-arguments-1.1.1.tgz#15b3f88fda01f2a97fec84ca761a560f123efa9b"
@@ -1785,6 +1790,11 @@ vue3-table-lite@^1.4.1:
   integrity sha512-7/oxOsnfEz4JXsBM1mN2k+5g54io12IwJQrzvD4HmtxGZbdw1eb+MBwVTQomuk/ahuuTtxAqBeCUpFNzkgJcMA==
   dependencies:
     vue "^3.0.5"
+
+vue3-tabs-component@^1.3.7:
+  version "1.3.7"
+  resolved "https://registry.yarnpkg.com/vue3-tabs-component/-/vue3-tabs-component-1.3.7.tgz#b6cc2d3909eeec0bd82b571029050731f6e4ce64"
+  integrity sha512-nitYlPlTrKCW8msQS1HdtajYNRAfZsSP+2wQQymJDGDCK3um62mXP4oKUgAF5pRe6md86LMRQud7Ic3zmu7Zpg==
 
 vue3-toastify@^0.2.5:
   version "0.2.5"

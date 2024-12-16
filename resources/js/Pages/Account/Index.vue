@@ -65,7 +65,11 @@ export default {
 </script>
 
 <template>
-    <h1 class="text-2xl font-bold mb-6">Account</h1>
+    <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold mb-6">Account</h1>
+        <button @click="isEditModalOpen=true" class="btn-primary mt-5">Edit</button>
+    </div>
+
     <!-- Avatar -->
     <div class="flex flex-row  gap-10">
         <div class="w-auto">
@@ -107,7 +111,6 @@ export default {
 
             <p class="font-light text-sm mt-7">Created:
                 {{ moment(page.props.user.created_at).format('Do MMM YYYY') }} </p>
-            <button @click="isEditModalOpen=true" class="btn-primary mt-5">Edit</button>
         </div>
 
     </div>
