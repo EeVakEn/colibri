@@ -63,6 +63,7 @@ class ChannelController extends Controller
     public function show(Channel $channel): InertiaResponse
     {
         return Inertia::render('Account/Channels/Show', [
+            'videos' => $channel->contents()->with('channel')->where('type', 'video')->get(),
             'channel' => $channel,
             'subsCount' => $channel->subscriptions()->count()
         ]);

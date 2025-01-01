@@ -19,4 +19,9 @@ class Channel extends Model
     {
         return $this->hasMany(Subscription::class)->where('created_at', '>', now()->subMonth());
     }
+
+    public function contents(): HasMany
+    {
+        return $this->hasMany(Content::class);
+    }
 }

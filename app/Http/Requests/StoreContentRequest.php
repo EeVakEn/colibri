@@ -20,7 +20,7 @@ class StoreContentRequest extends FormRequest
             'preview' => request()->method() == 'PUT'
                 ? 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:1024'
                 : 'required|image|mimes:jpeg,png,jpg,gif,svg|max:1024',
-            'video' => 'nullable|video|mimes:mp4,ogx,oga,ogv,ogg,webm',
+            'video' => 'nullable|mimes:mp4,ogx,oga,ogv,ogg,webm',
         ];
     }
 }

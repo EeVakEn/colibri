@@ -3,10 +3,12 @@ import Avatar from "@/UI/Avatar.vue";
 import LinkWithIcon from "@/UI/LinkWithIcon.vue";
 import humanFormat from "human-format";
 import {Tab, Tabs} from "vue3-tabs-component";
+import VideoCard from "@/UI/VideoCard.vue";
 
 const props = defineProps({
     channel: Object,
     subsCount: Number,
+    videos: Array,
 })
 </script>
 <script>
@@ -38,7 +40,9 @@ export default {
 
     <tabs>
         <tab name="Video">
-           Video
+           <div class="flex gap-5">
+               <VideoCard v-for="video in videos" :key="video.id" :video="video"/>
+           </div>
         </tab>
         <tab name="Articles">
             Articles

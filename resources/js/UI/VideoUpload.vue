@@ -13,18 +13,17 @@
             @change="handleFileChange"
         />
 
-        <div v-if="videoUrl" class="relative group">
+        <div v-if="internalVideoUrl" class="relative group">
             <video
                 class="w-full h-auto rounded-lg cursor-pointer"
-                :src="videoUrl"
+                :src="internalVideoUrl"
                 controls
-                @click.stop="playVideo"
             ></video>
             <button
                 class="absolute top-5 right-5 bg-red-700 bg-opacity-50 hover:bg-opacity-100 text-white rounded-full p-1 shadow-lg group-hover:opacity-100 opacity-0 duration-300"
                 @click.stop="removeVideo"
             >
-                <X/>
+                <X />
             </button>
         </div>
 
@@ -41,11 +40,21 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import {X} from 'lucide-vue-next'
+import { ref, watch } from "vue";
+import { X } from "lucide-vue-next";
 
-const videoUrl = ref(null);
+// Поддержка v-model
+const props = defineProps({
+    modelValue: String, // Получение значения из родителя
+});
+const emit = defineEmits(["update:modelValue"]); // Эмит для обновления значения
+
+const internalVideoUrl = ref(props.modelValue || null);
 const isDragging = ref(false);
+
+watch(() => props.modelValue, (newValue) => {
+    internalVideoUrl.value = newValue;
+});
 
 const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -55,10 +64,7 @@ const handleFileChange = (event) => {
 };
 
 const handleDrop = (event) => {
-    event.preventDefault();
-    console.log(event.dataTransfer);
     const file = event.dataTransfer.files[0];
-    console.log(event.dataTransfer)
     if (file) {
         previewVideo(file);
     }
@@ -66,12 +72,12 @@ const handleDrop = (event) => {
 };
 
 const previewVideo = (file) => {
-    const url = URL.createObjectURL(file);
-    videoUrl.value = url;
+    URL.createObjectURL(file);
+    emit("update:modelValue", file); // Обновление значения через v-model
 };
 
 const removeVideo = () => {
-    videoUrl.value = null;
+    internalVideoUrl.value = null;
+    emit("update:modelValue", null); // Сброс значения через v-model
 };
 </script>
-

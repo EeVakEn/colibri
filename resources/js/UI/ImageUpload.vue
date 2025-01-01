@@ -13,9 +13,9 @@
             @change="handleFileChange"
         />
 
-        <div v-if="imageUrl" class="relative group">
+        <div v-if="modelValue" class="relative group">
             <img
-                :src="imageUrl"
+                :src="modelValue"
                 alt="Preview"
                 class="w-full h-auto rounded-lg cursor-pointer"
                 @click.stop="removeImage"
@@ -24,7 +24,7 @@
                 class="absolute top-5 right-5 bg-gray-700 bg-opacity-50 text-white rounded-full p-1 shadow-lg group-hover:opacity-100 opacity-0 duration-300"
                 @click.stop="removeImage"
             >
-                <X/>
+                <X />
             </button>
         </div>
 
@@ -41,17 +41,23 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
-import {X} from "lucide-vue-next"
+import {ref, computed} from "vue";
+import {X} from "lucide-vue-next";
+
+// Props для v-model
+const props = defineProps({
+    modelValue: String, // Передаваемое значение
+});
+const emit = defineEmits(['update:modelValue']); // Событие для обновления значения
 
 const isDragging = ref(false);
-const imageUrl = ref(null);
 
 // Обработка изменения файла через input
 const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-        imageUrl.value = URL.createObjectURL(file);
+        URL.createObjectURL(file);
+        emit('update:modelValue', file);
     } else {
         alert("Please upload a valid image file.");
     }
@@ -61,7 +67,8 @@ const handleFileChange = (event) => {
 const handleDrop = (event) => {
     const file = event.dataTransfer.files[0];
     if (file) {
-        imageUrl.value = URL.createObjectURL(file);
+        const fileUrl = URL.createObjectURL(file);
+        emit('update:modelValue', fileUrl);
     } else {
         alert("Please drop a valid image file.");
     }
@@ -70,7 +77,6 @@ const handleDrop = (event) => {
 // Удаление изображения
 const removeImage = (event) => {
     event.stopPropagation();
-    imageUrl.value = null;
+    emit('update:modelValue', null);
 };
-
 </script>
