@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 
 class Content extends Model
@@ -15,6 +16,8 @@ class Content extends Model
         'video',
         'preview'
     ];
+
+    protected $appends = ['video_url'];
 
     protected static function booted()
     {
@@ -41,5 +44,15 @@ class Content extends Model
     public function channel(): BelongsTo
     {
         return $this->belongsTo(Channel::class);
+    }
+
+    public function getVideoUrlAttribute(): ?string
+    {
+        return Storage::url($this->video) ?? null;
+    }
+
+    public function getSimilarAttribute(): Collection
+    {
+        return Content::where('type', $this->type)->with('channel.user')->get();
     }
 }

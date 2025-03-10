@@ -36,8 +36,9 @@ class ContentController extends Controller
 
     public function show(Content $content): InertiaResponse
     {
+        $data = $content->load('channel')->append('similar');
         return Inertia::render('Content/Show', [
-            'content' => $content,
+            'content' => $data,
         ]);
     }
 

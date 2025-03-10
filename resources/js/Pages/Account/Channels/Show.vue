@@ -5,6 +5,7 @@ import humanFormat from "human-format";
 import {Tab, Tabs} from "vue3-tabs-component";
 import VideoCard from "@/UI/VideoCard.vue";
 
+
 const props = defineProps({
     channel: Object,
     subsCount: Number,
