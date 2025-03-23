@@ -55,4 +55,15 @@ class Content extends Model
     {
         return Content::where('type', $this->type)->with('channel.user')->get();
     }
+
+    public function getPathAttribute(): ?string
+    {
+        return Storage::disk('public')->path($this->video) ?? null;
+    }
+
+    public function transcript()
+    {
+        return $this->hasOne(Transcript::class);
+    }
+
 }
