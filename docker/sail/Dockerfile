@@ -1,6 +1,6 @@
 FROM sail-8.3/app
 
-# Обновляем пакеты и устанавливаем необходимые библиотеки для ffmpeg и Python
+# Обновляем пакеты и устанавливаем необходимые библиотеки
 RUN apt-get update && apt-get install -y \
     python3 python3-pip python3-venv ffmpeg \
     build-essential python3-dev libsndfile1 \
@@ -13,12 +13,16 @@ RUN python3 -m venv /opt/venv
 # Активируем виртуальное окружение
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Обновляем pip и устанавливаем Python-библиотеки для Whisper внутри виртуального окружения
+# Обновляем pip и устанавливаем библиотеки для анализа текста
 RUN pip install --upgrade pip && \
-    pip install torch torchvision torchaudio openai-whisper --no-cache-dir
+    pip install torch torchvision torchaudio \
+    numpy pandas scikit-learn \
+    sentence-transformers  deep-translator==1.11.4 \
+    && rm -rf /root/.cache/pip
 
-# Копируем и компилируем Python-скрипт
+# Копируем Python-скрипт в контейнер
 WORKDIR /var/www/html
+COPY scripts/analyze.py scripts/analyze.py
 
-# Проводим компиляцию скрипта (опционально, если нужно)
-RUN python3 -m compileall scripts/whisper_recognizer.py
+# Компилируем Python-скрипт (опционально)
+RUN python3 -m compileall scripts/analyze.py

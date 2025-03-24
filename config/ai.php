@@ -23,7 +23,7 @@ return [
         {content}
 
         List of competencies and skills:
-        {competencies_and_skills}
+        {skills}
 
         Requirements:
         1. Analyze the text of the transcription and find matches with the skills and competencies.
