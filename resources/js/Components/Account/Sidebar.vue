@@ -35,6 +35,14 @@ function isActive(rt) {
             >
                 Channels
             </LinkWithIcon>
+            <LinkWithIcon
+                :link="route('account.studio.index')"
+                icon="pen"
+                class="hover-li"
+                :class="{'font-bold':isActive('account.studio.index')}"
+            >
+                Creation Studio
+            </LinkWithIcon>
             <Link class="group hover-li hover:bg-red-100"  @click="logout">
                 <DoorClosed size="16" class="mr-2 inline group-hover:hidden"/>
                 <DoorOpen size="16" class="mr-2 hidden group-hover:inline"/>

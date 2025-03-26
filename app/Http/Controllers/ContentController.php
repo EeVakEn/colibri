@@ -8,7 +8,7 @@ use App\Http\Requests\StoreContentRequest;
 use App\Http\Requests\UpdateChannelRequest;
 use App\Models\Channel;
 use App\Models\Content;
-use App\Services\SpeechRecognitionService;
+use App\Services\ContentService;
 use App\Services\Table\ChannelTable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -21,7 +21,7 @@ class ContentController extends Controller
 {
 
     public function __construct(
-        private readonly SpeechRecognitionService $speechRecognitionService,
+        private readonly ContentService $contentService,
     )
     {
     }
@@ -40,8 +40,7 @@ class ContentController extends Controller
         $validated = $request->validated();
         $channel = Channel::findOrFail($request->input('channel_id'));
         $content = $channel->contents()->create($validated);
-        $text = $this->speechRecognitionService->processVideo($content);
-        $content->transcript()->create($text);
+        $this->contentService->processContent($content);
         return redirect()->route('account.channels.index')->with('message', 'Content created.');
     }
 

@@ -39,7 +39,10 @@ export default {
         :tableMeta="tableMeta"
     >
         <template #cell(avatar)="{data}">
-            <Avatar :user='data'></Avatar>
+            <Link :href="route('account.channels.show', [data.id])"><Avatar :user='data'></Avatar></Link>
+        </template>
+        <template #cell(name)="{data}">
+            <Link :href="route('account.channels.show', [data.id])">{{data.name}}</Link>
         </template>
         <template #cell(description)="{data}">
             <p class="max-w-[300px] overflow-hidden" v-html="data.description"/>

@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\ChannelController;
 use App\Http\Controllers\ContentController;
+use App\Http\Controllers\CreationStudioController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -37,6 +38,10 @@ Route::prefix('account')->name('account.')->middleware(['auth'])->group(function
         Route::post('/upload-avatar', 'uploadAvatar')->name('upload.avatar');
     });
     Route::resource('channels', ChannelController::class)->middleware('auth');
+
+    Route::prefix('studio')->name('studio.')->controller(CreationStudioController::class)->group(function () {
+       Route::get('/', 'index')->name('index');
+    });
 });
 Route::resource('contents', ContentController::class)->middleware('auth')->except(['index']);
 

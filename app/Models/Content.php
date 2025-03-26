@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use App\Services\ContentService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 
@@ -14,10 +17,14 @@ class Content extends Model
         'content',
         'type',
         'video',
-        'preview'
+        'preview',
+        'processed_at',
     ];
 
-    protected $appends = ['video_url'];
+    const TYPE_VIDEO = 'video';
+    const TYPE_ARTICLE = 'article';
+
+    protected $appends = ['video_url', 'preview_url'];
 
     protected static function booted()
     {
@@ -37,7 +44,6 @@ class Content extends Model
                 }
                 $content->video = request()->file('video')->store('videos', 'public');
             }
-
         });
     }
 
@@ -49,6 +55,12 @@ class Content extends Model
     public function getVideoUrlAttribute(): ?string
     {
         return Storage::url($this->video) ?? null;
+    }
+
+
+    public function getPreviewUrlAttribute(): ?string
+    {
+        return Storage::url($this->preview) ?? null;
     }
 
     public function getSimilarAttribute(): Collection
@@ -64,6 +76,11 @@ class Content extends Model
     public function transcript()
     {
         return $this->hasOne(Transcript::class);
+    }
+
+    public function skills(): BelongsToMany
+    {
+        return $this->belongsToMany(Skill::class)->withPivot('depth', 'activated_at');
     }
 
 }

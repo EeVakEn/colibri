@@ -22,7 +22,7 @@ export default {
 <template>
     <div class="flex justify-between items-start">
         <div class="flex flex-row items-start mb-5 gap-5">
-            <Avatar class-name="cursor-pointer border-2 border-indigo-700 w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden" :user="channel">
+            <Avatar class-name="cursor-pointer border-2 border-indigo-700 !w-20 !h-20 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden aspect-square" :user="channel">
             </Avatar>
             <div class="flex flex-col">
                 <h1 class="inline font-bold text-2xl">
@@ -41,7 +41,7 @@ export default {
 
     <tabs>
         <tab name="Video">
-           <div class="flex gap-5">
+           <div class="grid md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 sm:grid-cols-5 gap-5">
                <VideoCard v-for="video in videos" :key="video.id" :video="video"/>
            </div>
         </tab>

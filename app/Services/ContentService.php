@@ -2,20 +2,30 @@
 
 namespace App\Services;
 
+use App\Jobs\AnalyzeSkillsJob;
+use App\Jobs\TranscribeVideoJob;
 use App\Models\Content;
 use App\Models\Skill;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Process\Process;
+use Illuminate\Support\Facades\Bus;
 
-class SpeechRecognitionService implements ShouldQueue
+class ContentService
 {
-    use Queueable;
+    public function processContent(Content $content): void
+    {
+        if ($content->type === Content::TYPE_VIDEO && $content->video && file_exists($content->path)) {
+            Bus::chain([
+                new TranscribeVideoJob($content),
+                new AnalyzeSkillsJob($content),
+            ])->dispatch();
+        } else {
+            dispatch(new AnalyzeSkillsJob($content));
+        }
+    }
 
-    public function processVideo(Content $content): string
+    public function transcriptVideo(Content $content): string
     {
         $uuid = Uuid::uuid4()->toString();
         $audioPath = Storage::disk('public')->path("tmp/$uuid.wav");
@@ -33,14 +43,14 @@ class SpeechRecognitionService implements ShouldQueue
         return $text;
     }
 
-    protected function extractAudio(string $videoPath, string $audioPath)
+    protected function extractAudio(string $videoPath, string $audioPath): void
     {
         $process = new Process([
             config('env.ffmpeg_path'), '-i', $videoPath, '-vn', '-acodec', 'pcm_s16le',
             '-ar', '16000', '-ac', '1', $audioPath, '-hide_banner', '-loglevel', 'error'
         ]);
         $process->run();
-
+        $process->wait();
         if (!$process->isSuccessful()) {
             throw new \RuntimeException('Audio extract error: ' . $process->getErrorOutput());
         }
@@ -50,7 +60,7 @@ class SpeechRecognitionService implements ShouldQueue
     {
         $process = new Process([config('env.python_path'), $pythonScript, $audioPath]);
         $process->run();
-
+        $process->wait();
         if (!$process->isSuccessful()) {
             throw new \RuntimeException('Speech recognition error: ' . $process->getErrorOutput());
         }
@@ -58,12 +68,12 @@ class SpeechRecognitionService implements ShouldQueue
         return trim($process->getOutput());
     }
 
-    public function analyzeTranscription($content)
+    public function getSkills($content)
     {
-        $contentText = $content->transcript->text;
+        $contentText = $content->description . $content->transcript?->text;
         $skills = Skill::query()->get(['id', 'name', 'description'])->toArray();
-
-        $process = new Process(['python3', 'scripts/analyze.py']);
+        $script = base_path('scripts/analyze.py');
+        $process = new Process(['python3', $script]);
         $process->setInput(json_encode([
             'content' => $contentText,
             'skills' => $skills,
@@ -71,10 +81,9 @@ class SpeechRecognitionService implements ShouldQueue
         $process->run();
 
         if (!$process->isSuccessful()) {
-            dd($process->getErrorOutput());
+            throw new \RuntimeException('Text analyze error: ' . $process->getErrorOutput());
         }
         return collect(json_decode($process->getOutput()))->shift(5);
     }
-
 }
 

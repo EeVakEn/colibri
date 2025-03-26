@@ -46,6 +46,13 @@
                             <CircleUserRound class="mr-2 inline"/>
                             <span>Channels</span>
                         </Link>
+                        <LinkWithIcon
+                            :link="route('account.studio.index')"
+                            icon="pen"
+                            class="hover-li"
+                        >
+                            Creation Studio
+                        </LinkWithIcon>
                         <Link href="#wallet" class="hover-li" >
                             <Wallet class="mr-2 inline"/>
                             <span>Wallet</span>
@@ -73,6 +80,7 @@ import { router } from '@inertiajs/vue3'
 import Dropdown from "@/UI/Dropdown.vue";
 import Icon from "@/UI/Icon.vue";
 import Avatar from "@/UI/Avatar.vue";
+import LinkWithIcon from "@/UI/LinkWithIcon.vue";
 defineComponent({
     Link
 })

@@ -23,8 +23,8 @@ defineProps({
             />
             <div class="bg-white p-2 sm:p-3 flex flex-col gap-5">
                 <div class="flex flex-row gap-5">
-                    <Avatar class-name="cursor-pointer border-2 border-indigo-700 !w-[30px] rounded-full bg-gray-200 flex items-center justify-center overflow-hidden" :user="video.channel"/>
-                    <h3 class="mt-0.5 text-lg text-gray-900 truncate">{{ video.title }}</h3>
+                    <Avatar class-name="block cursor-pointer border-2 border-indigo-700 !w-[30px] !h-[30px] min-w-[30px] rounded-full bg-gray-200 flex items-center justify-center overflow-hidden aspect-square" :user="video.channel"/>
+                    <h3 class="mt-0.5 text-lg inline text-gray-900 truncate">{{ video.title }}</h3>
                 </div>
                 <div class="flex flex-1 items-end justify-between">
                     <span class="w-1/2 block text-xs text-gray-500">{{ video.views ?? 0 }} Views</span>
