@@ -13,15 +13,24 @@ use Illuminate\Queue\SerializesModels;
 
 class TranscribeVideoJob implements ShouldQueue
 {
+    public $timeout = 30;
+
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(protected Content $content)
     {
     }
 
-    public function handle(ContentService $contentService)
+    public function handle(ContentService $contentService): void
     {
         $text = $contentService->transcriptVideo($this->content);
         $this->content->transcript()->create(['text' => $text]);
+    }
+
+    public function failed(\Throwable $exception): void
+    {
+        $this->content->update([
+            'processing_error' => $exception->getMessage()
+        ]);
     }
 }

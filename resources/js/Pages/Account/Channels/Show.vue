@@ -41,9 +41,9 @@ export default {
 
     <tabs>
         <tab name="Video">
-           <div class="grid md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 sm:grid-cols-5 gap-5">
-               <VideoCard v-for="video in videos" :key="video.id" :video="video"/>
-           </div>
+            <div class="flex flex-row flex-wrap gap-5">
+                <VideoCard v-for="video in videos" :key="video.id" :video="video"/>
+            </div>
         </tab>
         <tab name="Articles">
             Articles

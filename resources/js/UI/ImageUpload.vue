@@ -1,3 +1,47 @@
+<script setup>
+import { ref, watch } from "vue";
+import { X } from "lucide-vue-next";
+
+const props = defineProps({
+    modelValue: File, // Храним сам файл
+});
+const emit = defineEmits(["update:modelValue"]);
+
+const isDragging = ref(false);
+const previewUrl = ref(null); // URL для превью
+
+// Следим за modelValue и обновляем previewUrl
+watch(() => props.modelValue, (newValue) => {
+    previewUrl.value = newValue ? URL.createObjectURL(newValue) : null;
+});
+
+const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file && isValidImage(file)) {
+        emit("update:modelValue", file); // Передаем файл
+    }
+};
+
+const handleDrop = (event) => {
+    event.preventDefault();
+    const file = event.dataTransfer.files[0];
+    if (file && isValidImage(file)) {
+        emit("update:modelValue", file); // Передаем файл
+    }
+    isDragging.value = false;
+};
+
+const removeImage = () => {
+    previewUrl.value = null;
+    emit("update:modelValue", null);
+};
+
+// Проверка типа изображения
+const isValidImage = (file) => {
+    return ["image/jpeg", "image/png", "image/gif", "image/webp"].includes(file.type);
+};
+</script>
+
 <template>
     <div
         class="relative border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center text-center hover:border-blue-400 focus-within:border-blue-400"
@@ -13,12 +57,11 @@
             @change="handleFileChange"
         />
 
-        <div v-if="modelValue" class="relative group">
+        <div v-if="previewUrl" class="relative group">
             <img
-                :src="modelValue"
+                :src="previewUrl"
                 alt="Preview"
                 class="w-full h-auto rounded-lg cursor-pointer"
-                @click.stop="removeImage"
             />
             <button
                 class="absolute top-5 right-5 bg-gray-700 bg-opacity-50 text-white rounded-full p-1 shadow-lg group-hover:opacity-100 opacity-0 duration-300"
@@ -39,44 +82,3 @@
         </div>
     </div>
 </template>
-
-<script setup>
-import {ref, computed} from "vue";
-import {X} from "lucide-vue-next";
-
-// Props для v-model
-const props = defineProps({
-    modelValue: String, // Передаваемое значение
-});
-const emit = defineEmits(['update:modelValue']); // Событие для обновления значения
-
-const isDragging = ref(false);
-
-// Обработка изменения файла через input
-const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        URL.createObjectURL(file);
-        emit('update:modelValue', file);
-    } else {
-        alert("Please upload a valid image file.");
-    }
-};
-
-// Обработка перетаскивания файла
-const handleDrop = (event) => {
-    const file = event.dataTransfer.files[0];
-    if (file) {
-        const fileUrl = URL.createObjectURL(file);
-        emit('update:modelValue', fileUrl);
-    } else {
-        alert("Please drop a valid image file.");
-    }
-};
-
-// Удаление изображения
-const removeImage = (event) => {
-    event.stopPropagation();
-    emit('update:modelValue', null);
-};
-</script>

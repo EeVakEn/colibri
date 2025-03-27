@@ -19,11 +19,18 @@ class AnalyzeSkillsJob implements ShouldQueue
     public int $timeout = 300;
     public function __construct(protected Content $content) {}
 
-    public function handle(ContentService $contentService)
+    public function handle(ContentService $contentService): void
     {
         $skills = $contentService->getSkills($this->content);
         $this->content->skills()->sync($skills->mapWithKeys(fn($item) => [$item->id => ['depth' => $item->depth]])->toArray());
         $this->content->update(['processed_at'=> now()]);
+    }
+
+    public function failed(\Throwable $exception): void
+    {
+       $this->content->update([
+            'processing_error' => $exception->getMessage()
+        ]);
     }
 }
 

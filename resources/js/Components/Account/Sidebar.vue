@@ -37,11 +37,11 @@ function isActive(rt) {
             </LinkWithIcon>
             <LinkWithIcon
                 :link="route('account.studio.index')"
-                icon="pen"
+                icon="brush"
                 class="hover-li"
                 :class="{'font-bold':isActive('account.studio.index')}"
             >
-                Creation Studio
+                Studio
             </LinkWithIcon>
             <Link class="group hover-li hover:bg-red-100"  @click="logout">
                 <DoorClosed size="16" class="mr-2 inline group-hover:hidden"/>

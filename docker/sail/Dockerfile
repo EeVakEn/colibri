@@ -26,3 +26,7 @@ COPY scripts/analyze.py scripts/analyze.py
 
 # Компилируем Python-скрипт (опционально)
 RUN python3 -m compileall scripts/analyze.py
+
+RUN echo "memory_limit=3G" >> /etc/php/8.3/cli/php.ini
+RUN echo "upload_max_filesize=3G" >> /etc/php/8.3/cli/php.ini
+RUN echo "post_max_size=3G" >> /etc/php/8.3/cli/php.ini

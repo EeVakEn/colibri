@@ -1,3 +1,47 @@
+<script setup>
+import { ref, watch } from "vue";
+import { X } from "lucide-vue-next";
+
+const props = defineProps({
+    modelValue: File, // Храним сам файл
+});
+const emit = defineEmits(["update:modelValue"]);
+
+const isDragging = ref(false);
+const previewUrl = ref(null); // URL для отображения видео
+
+// Следим за modelValue и обновляем previewUrl
+watch(() => props.modelValue, (newValue) => {
+    previewUrl.value = newValue ? URL.createObjectURL(newValue) : null;
+});
+
+const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file && isValidVideo(file)) {
+        emit("update:modelValue", file); // Передаем файл
+    }
+};
+
+const handleDrop = (event) => {
+    event.preventDefault();
+    const file = event.dataTransfer.files[0];
+    if (file && isValidVideo(file)) {
+        emit("update:modelValue", file); // Передаем файл
+    }
+    isDragging.value = false;
+};
+
+const removeVideo = () => {
+    previewUrl.value = null;
+    emit("update:modelValue", null);
+};
+
+// Проверка типа видео
+const isValidVideo = (file) => {
+    return ["video/mp4", "video/ogg", "video/webm"].includes(file.type);
+};
+</script>
+
 <template>
     <div
         class="relative border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center text-center hover:border-blue-400 focus-within:border-blue-400"
@@ -13,10 +57,10 @@
             @change="handleFileChange"
         />
 
-        <div v-if="internalVideoUrl" class="relative group">
+        <div v-if="previewUrl" class="relative group">
             <video
                 class="w-full h-auto rounded-lg cursor-pointer"
-                :src="internalVideoUrl"
+                :src="previewUrl"
                 controls
             ></video>
             <button
@@ -33,51 +77,8 @@
             </div>
             <div v-else>
                 <p class="text-gray-500">Drag and drop a video file here, or click to upload.</p>
-                <p class="text-sm text-gray-400 mt-2">Accepted formats: MP4, AVI, MOV</p>
+                <p class="text-sm text-gray-400 mt-2">Accepted formats: MP4, OGG, WEBM</p>
             </div>
         </div>
     </div>
 </template>
-
-<script setup>
-import { ref, watch } from "vue";
-import { X } from "lucide-vue-next";
-
-// Поддержка v-model
-const props = defineProps({
-    modelValue: String, // Получение значения из родителя
-});
-const emit = defineEmits(["update:modelValue"]); // Эмит для обновления значения
-
-const internalVideoUrl = ref(props.modelValue || null);
-const isDragging = ref(false);
-
-watch(() => props.modelValue, (newValue) => {
-    internalVideoUrl.value = newValue;
-});
-
-const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        previewVideo(file);
-    }
-};
-
-const handleDrop = (event) => {
-    const file = event.dataTransfer.files[0];
-    if (file) {
-        previewVideo(file);
-    }
-    isDragging.value = false;
-};
-
-const previewVideo = (file) => {
-    URL.createObjectURL(file);
-    emit("update:modelValue", file); // Обновление значения через v-model
-};
-
-const removeVideo = () => {
-    internalVideoUrl.value = null;
-    emit("update:modelValue", null); // Сброс значения через v-model
-};
-</script>
