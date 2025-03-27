@@ -45,6 +45,8 @@ Route::prefix('account')->name('account.')->middleware(['auth'])->group(function
 });
 Route::resource('contents', ContentController::class)->middleware('auth')->except(['index']);
 
-
+Route::controller(ContentController::class)->name('contents.')->prefix('contents')->group(function () {
+    Route::post('/{content}/activate', 'activateSkills')->name('skills.activate');
+});
 
 

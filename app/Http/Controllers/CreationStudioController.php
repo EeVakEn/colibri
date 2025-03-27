@@ -25,6 +25,7 @@ class CreationStudioController extends Controller
 
         return Inertia::render('Account/CreationStudio/Index', [
             'tableMeta' => $this->contentTable->getMeta(),
+            'csrf' => csrf_token(),
         ]);
     }
 }

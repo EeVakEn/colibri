@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enum\ContentTypes;
+use App\Http\Requests\SkillsActivateRequest;
 use App\Http\Requests\StoreChannelRequest;
 use App\Http\Requests\StoreContentRequest;
 use App\Http\Requests\UpdateChannelRequest;
@@ -70,5 +71,13 @@ class ContentController extends Controller
     {
         $content->delete();
         return redirect()->route('account.channels.show', $content->channel)->with('message', 'Content deleted.');
+    }
+
+    public function activateSkills(Content $content, SkillsActivateRequest $request): RedirectResponse
+    {
+        foreach ($request->input('skill_ids') as $skillId) {
+            $content->skills()->updateExistingPivot($skillId, ['activated_at' => now()]);
+        }
+        return redirect()->back();
     }
 }
