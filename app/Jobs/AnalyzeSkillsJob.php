@@ -15,8 +15,8 @@ class AnalyzeSkillsJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public int $tries = 30;
-    public int $timeout = 300;
+    public int $tries = 3;
+    public int $timeout = 1000;
     public function __construct(protected Content $content) {}
 
     public function handle(ContentService $contentService): void

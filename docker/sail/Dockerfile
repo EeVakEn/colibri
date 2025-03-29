@@ -15,7 +15,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 # Обновляем pip и устанавливаем библиотеки для анализа текста
 RUN pip install --upgrade pip && \
-    pip install torch torchvision torchaudio \
+    pip install torch torchvision torchaudio faster-whisper \
     numpy pandas scikit-learn \
     sentence-transformers  deep-translator==1.11.4 \
     && rm -rf /root/.cache/pip

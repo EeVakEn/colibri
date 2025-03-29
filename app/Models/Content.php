@@ -45,6 +45,15 @@ class Content extends Model
                 $content->video = request()->file('video')->store('videos', 'public');
             }
         });
+
+        static::deleted(function ($content) {
+            if ($content->video) {
+                Storage::disk('public')->delete($content->video);
+            }
+            if ($content->preview) {
+                Storage::disk('public')->delete($content->preview);
+            }
+        });
     }
 
     public function channel(): BelongsTo

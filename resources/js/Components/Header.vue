@@ -48,7 +48,7 @@
                         </Link>
                         <Link
                             class="hover-li"
-                            :link="route('account.studio.index')"
+                            :href="route('account.studio.index')"
                         >
                             <Brush class="mr-2 inline"/>
                             Studio

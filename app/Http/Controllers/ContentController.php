@@ -70,7 +70,7 @@ class ContentController extends Controller
     public function destroy(Content $content): RedirectResponse
     {
         $content->delete();
-        return redirect()->route('account.channels.show', $content->channel)->with('message', 'Content deleted.');
+        return redirect()->route('account.studio.index')->with('message', 'Content deleted.');
     }
 
     public function activateSkills(Content $content, SkillsActivateRequest $request): RedirectResponse

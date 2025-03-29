@@ -13,6 +13,6 @@ class SkillsSeeder extends Seeder
     public function run(): void
     {
         Skill::query()->delete();
-        \Excel::import(new SkillsImport, Storage::disk('public')->path('imports/skills.csv'));
+        \Excel::import(new SkillsImport, Storage::disk('public')->path('imports/skills2.csv'));
     }
 }

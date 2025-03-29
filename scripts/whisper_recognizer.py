@@ -1,14 +1,13 @@
 import sys
-import whisper
+from faster_whisper import WhisperModel
 
 # Получаем путь к аудиофайлу из аргументов
 audio_path = sys.argv[1]
 
-# Загружаем модель Whisper
-model = whisper.load_model("base")
+model = WhisperModel("tiny", compute_type="int8")
 
-# Распознаем речь
-result = model.transcribe(audio_path)
+# Распознаем аудио
+segments, _ = model.transcribe(audio_path)
 
-# Выводим распознанный текст
-print(result["text"])
+# Выводим текст
+print(" ".join(segment.text for segment in segments))

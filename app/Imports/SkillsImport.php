@@ -12,7 +12,7 @@ class SkillsImport implements ToModel, WithHeadingRow
     {
         return new Skill([
             'name' => $row['skill'],
-            'description' => $row['description'],
+            'description' => $row['description']??'',
         ]);
     }
 }

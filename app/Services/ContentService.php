@@ -46,8 +46,8 @@ class ContentService
     protected function extractAudio(string $videoPath, string $audioPath): void
     {
         $process = new Process([
-            config('env.ffmpeg_path'), '-i', $videoPath, '-vn', '-acodec', 'pcm_s16le',
-            '-ar', '16000', '-ac', '1', $audioPath, '-hide_banner', '-loglevel', 'error'
+            config('env.ffmpeg_path'), '-i', $videoPath, '-vn', '-acodec', 'libmp3lame',
+            '-b:a', '64k', '-ar', '16000', '-ac', '1', $audioPath, '-hide_banner', '-loglevel', 'error'
         ]);
         $process->run();
         $process->wait();

@@ -13,7 +13,9 @@ use Illuminate\Queue\SerializesModels;
 
 class TranscribeVideoJob implements ShouldQueue
 {
-    public $timeout = 30;
+
+    public int $tries = 3;
+    public int $timeout = 1000;
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 

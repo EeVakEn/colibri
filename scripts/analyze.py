@@ -49,13 +49,13 @@ def analyze_text(content, skills):
         # Формируем список скиллов и их описаний
         skill_texts = []
         for skill in skills:
-            if skill.get("name") and skill.get("description"):
-                skill_texts.append(f"{skill['name']} {skill['description']}")
+            if skill.get("name"):
+                skill_texts.append(skill["name"])
             else:
-                return json.dumps({"error": "Missing name or description for some skills"})
+                return json.dumps({"error": "Missing name for some skills"})
 
         if not skill_texts:
-            return json.dumps({"error": "No valid skill names or descriptions found"})
+            return json.dumps({"error": "No valid skill names found"})
 
         # 3. TF-IDF анализ
         all_texts = [content] + skill_texts

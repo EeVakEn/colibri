@@ -26,7 +26,7 @@ class ChannelTable extends Table
         return [
             ['label' => 'Avatar', 'field' => 'avatar', 'sortable' => true],
             ['label' => 'Name', 'field' => 'name', 'sortable' => true],
-            ['label' => 'Description', 'field' => 'description'],
+            ['label' => 'Description', 'field' => 'description', 'td-class'=>'w-1/2'],
             ['label' => 'Is Free', 'field' => 'is_free', 'sortable' => true],
             ['label' => 'Price', 'field' => 'subscription_price', 'sortable' => true],
             ['label' => 'Actions', 'field' => 'actions', 'sortable' => false],

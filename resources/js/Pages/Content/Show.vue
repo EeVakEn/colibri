@@ -20,7 +20,7 @@ export default {
         <main>
             <Head :title="content.title"/>
             <template v-if="content.type==='video'">
-                <VideoPlayer :videoUrl="content.video_url" :videoId="content.id"/>
+                <VideoPlayer :videoUrl="content.video_url" :videoId="content.id" :preview-url="content.preview_url"/>
                 <h2 class="text-2xl font-bold my-3">{{ content.title }}</h2>
                 <h3 class="text-xl font-bold my-3">Description</h3>
                 <div v-html="content.content"/>

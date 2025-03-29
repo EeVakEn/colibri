@@ -1,50 +1,54 @@
-
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import {ref, onMounted, onBeforeUnmount, computed, watch} from 'vue';
 import axios from 'axios';
+import 'video.js/dist/video-js.css';
+import {VideoPlayer} from '@videojs-player/vue';
 
 const props = defineProps({
     videoUrl: String,
+    previewUrl: String,
     videoId: [String, Number],
 });
 
 const showPopup = ref(false);
 const rating = ref(0);
 const comment = ref('');
-const videoWatchedHalfway = ref(false);
 const actualWatchTime = ref(0);
-let watchTimeInterval = null;
-let lastSentTime = 0;
-const videoElement = ref(null);
+const lastRecordedTime = ref(0);
+const videoDuration = ref(0);
+const player = ref(null);
+let watchTimer = null;
+const is75PercentWatched = computed(() => actualWatchTime.value >= videoDuration.value * 0.75);
+
+const videoOptions = {
+    autoplay: true,
+    controls: true,
+    fluid: true,
+    playbackRates: [0.5, 1, 1.25, 1.5, 1.75, 2],
+    sources: [{src: props.videoUrl, type: 'video/mp4'}],
+    poster: props.previewUrl,
+    experimentalSvgIcons: true,
+};
 
 const handleVideoEnd = () => {
     showPopup.value = true;
 };
 
 const handleTimeUpdate = () => {
-    const currentTime = videoElement.value.currentTime;
+    if (!player.value?.player) return;
+    const currentTime = player.value.player.currentTime();
 
-    // Check if the user is skipping forward
-    if (currentTime - actualWatchTime.value > 1) {
-        actualWatchTime.value = currentTime;
+    if (currentTime > lastRecordedTime.value) {
+        actualWatchTime.value += currentTime - lastRecordedTime.value;
     }
 
-    const halfwayPoint = videoElement.value.duration / 2;
-    if (actualWatchTime.value >= halfwayPoint) {
-        videoWatchedHalfway.value = true;
-    }
-
-    // Send progress update every minute
-    if (currentTime - lastSentTime >= 60) {
-        sendProgressUpdate(currentTime);
-        lastSentTime = currentTime;
-    }
+    lastRecordedTime.value = currentTime;
 };
 
-const sendProgressUpdate = (currentTime) => {
+const sendProgressUpdate = () => {
     axios.post('/api/video-progress', {
         videoId: props.videoId,
-        progress: currentTime,
+        progress: actualWatchTime.value,
     })
         .then(response => {
             console.log('Progress updated:', response.data);
@@ -55,43 +59,92 @@ const sendProgressUpdate = (currentTime) => {
 };
 
 const submitReview = () => {
-    if (videoWatchedHalfway.value) {
-        // Handle the submission of the review (e.g., send to server)
+    if (is75PercentWatched.value) {
         console.log('Rating:', rating.value);
         console.log('Comment:', comment.value);
         showPopup.value = false;
     } else {
-        alert('Please watch at least half of the video without skipping to submit a comment.');
+        alert('You must watch at least 75% of the video to submit a comment.');
+    }
+};
+const startWatchTimer = () => {
+    if (watchTimer) clearInterval(watchTimer);
+
+    watchTimer = setInterval(() => {
+        if (isPlaying.value) {
+            const currentTime = player.value?.player?.currentTime() || 0;
+
+            if (currentTime > lastRecordedTime.value) {
+                actualWatchTime.value += currentTime - lastRecordedTime.value;
+            }
+
+            lastRecordedTime.value = currentTime;
+        }
+    }, 1000);
+};
+
+const stopWatchTimer = () => {
+    if (watchTimer) {
+        clearInterval(watchTimer);
+        watchTimer = null;
     }
 };
 
+
+const handlePlay = () => {
+    isPlaying.value = true;
+    startWatchTimer();
+};
+
+const handlePause = () => {
+    isPlaying.value = false;
+    stopWatchTimer();
+};
+
 onMounted(() => {
-    watchTimeInterval = setInterval(handleTimeUpdate, 1000);
+    const waitForPlayer = setInterval(() => {
+        if (player.value?.player) {
+            clearInterval(waitForPlayer);
+
+            player.value.player.on('play', handlePlay);
+            player.value.player.on('pause', handlePause);
+            player.value.player.on('ended', handleVideoEnd);
+        }
+    }, 100);
 });
 
 onBeforeUnmount(() => {
-    clearInterval(watchTimeInterval);
+    if (player.value?.player) {
+        player.value.player.off('play', handlePlay);
+        player.value.player.off('pause', handlePause);
+        player.value.player.off('ended', handleVideoEnd);
+    }
+    stopWatchTimer();
 });
 </script>
 
 <template>
-    <div class="relative w-full h-auto rounded-lg cursor-pointer">
-        <video
-            class="w-full h-full"
-            :src="videoUrl"
-            controls
+    <div class="relative w-full h-auto rounded-lg ">
+        <VideoPlayer
+            class="video-js shadow-lg shadow-indigo-500/50" preload="none"
+            data-setup='{ "html5" : { "nativeTextTracks" : false } }'
+            ref="player"
+            :options="videoOptions"
             @ended="handleVideoEnd"
-            @timeupdate="handleTimeUpdate"
-            ref="videoElement"
-        ></video>
-        <!-- Popup for Rating and Commenting -->
+        />
+        <div class="mt-2">
+            <p><strong>Watched:</strong> {{ actualWatchTime.toFixed(1) }} сек.</p>
+            <p><strong>Duration:</strong> {{ videoDuration }} сек.</p>
+        </div>
+
         <div v-if="showPopup" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div class="bg-white p-6 rounded-lg">
                 <h3 class="text-xl font-bold mb-4">Rate and Comment</h3>
                 <div class="mb-4">
                     <label class="block mb-2">Rating:</label>
                     <div>
-                        <span v-for="star in 10" :key="star" @click="rating = star" class="cursor-pointer text-2xl" :class="{'text-yellow-500': star <= rating, 'text-gray-300': star > rating}">★</span>
+                        <span v-for="star in 10" :key="star" @click="rating = star" class="cursor-pointer text-2xl"
+                              :class="{'text-yellow-500': star <= rating, 'text-gray-300': star > rating}">★</span>
                     </div>
                 </div>
                 <div class="mb-4">
@@ -106,7 +159,42 @@ onBeforeUnmount(() => {
     </div>
 </template>
 
+<style lang="scss">
+.video-js {
+    border-radius: 20px !important;
+    font-size: 16px;
 
-<style scoped>
-/* Add any scoped styles here */
+    .vjs-progress-holder {
+        height: 1.3em;
+    }
+
+    .vjs-big-play-button {
+        line-height: 1.85em;
+        height: 2em;
+        width: 2em;
+        border-radius: 50%;
+    }
+
+    .vjs-control-bar {
+        border-radius: 0 0 20px 20px !important;
+        opacity: 0;
+    }
+
+    .vjs-tech, .vjs-poster {
+        border-radius: 20px !important;
+    }
+
+    &:hover {
+        .vjs-big-play-button {
+            opacity: 1;
+            transition: ease-in-out 0.5s;
+        }
+
+        .vjs-control-bar {
+            opacity: 1;
+            transition: ease-in-out 0.5s;
+        }
+    }
+}
+
 </style>

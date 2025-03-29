@@ -17,7 +17,7 @@ const props = defineProps({
     tableMeta: Object,
     csrf: String,
 })
-const deleteChannel = (url) => {
+const deleteContent = (url) => {
     router.delete(url, {
         onSuccess: function () {
             tableRef.value.refresh()
@@ -74,7 +74,11 @@ export default {
                 placeholder="Select skill for recomendations"
                 label="name"
                 track-by="id"
-            />
+            >
+                <template #option="{option}">
+                    {{option.name}} - {{ option.pivot.depth}}
+                </template>
+            </multiselect>
             <div class="flex justify-end">
                 <button class="btn-primary mt-3">Activate</button>
             </div>
@@ -126,11 +130,11 @@ export default {
                     <ChevronDown class="inline" :size="16"></ChevronDown>
                 </b></template>
                 <div class="m-2">
-                    <Link :href="route('account.channels.show', [data.id])" class="hover-li font-bold">Go to channel
-                    </Link>
-                    <Link :href="route('account.channels.edit', [data.id])" class="hover-li font-bold">Edit</Link>
-                    <Link @click="deleteChannel(route('account.channels.destroy', [data.id]))"
-                          class="hover-li hover:bg-red-100 font-bold">Delete
+                    <Link :href="route('contents.show', [data.id])" class="hover-li font-bold">Show</Link>
+                    <Link :href="route('contents.edit', [data.id])" class="hover-li font-bold">Edit</Link>
+                    <Link @click="deleteContent(route('contents.destroy', [data.id]))"
+                          class="hover-li hover:bg-red-100 font-bold">
+                        Delete
                     </Link>
                 </div>
             </Dropdown>
@@ -139,6 +143,13 @@ export default {
 </template>
 
 <style src="vue-multiselect/dist/vue-multiselect.css"></style>
-<style scoped>
-
+<style>
+.multiselect__option--highlight,
+.multiselect__option--highlight:after,
+.multiselect__tag{
+    background: #4f46e5;
+}
+.multiselect__tag-icon::after {
+    color: #a6a1f1;
+}
 </style>
