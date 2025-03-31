@@ -47,7 +47,7 @@ class ContentController extends Controller
 
     public function show(Content $content): InertiaResponse
     {
-        $data = $content->load('channel')->append('similar');
+        $data = $content->load('channel', 'reviews.user', 'activeSkills')->append('similar');
         return Inertia::render('Content/Show', [
             'content' => $data,
         ]);
@@ -79,5 +79,12 @@ class ContentController extends Controller
             $content->skills()->updateExistingPivot($skillId, ['activated_at' => now()]);
         }
         return redirect()->back();
+    }
+
+    public function analyzeSkills(Content $content): JsonResponse
+    {
+        $content->update(['processing_errors' => null, 'processed_at' => null]);
+        $this->contentService->processContent($content);
+        return response()->json(['success' => 'Text analysis is run.']);
     }
 }

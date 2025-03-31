@@ -14,7 +14,7 @@ class StoreContentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'type' => 'required|string|in:image,video',
+            'type' => 'required|string|in:article,video',
             'title' => 'required|string',
             'content' => 'nullable|string',
             'preview' => request()->method() == 'PUT'

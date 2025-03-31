@@ -3,11 +3,9 @@ import {ref, onMounted, onBeforeUnmount, computed, watch} from 'vue';
 import axios from 'axios';
 import 'video.js/dist/video-js.css';
 import {VideoPlayer} from '@videojs-player/vue';
-
+const emit = defineEmits(['review']);
 const props = defineProps({
-    videoUrl: String,
-    previewUrl: String,
-    videoId: [String, Number],
+    content: Object,
 });
 
 const showPopup = ref(false);
@@ -25,8 +23,8 @@ const videoOptions = {
     controls: true,
     fluid: true,
     playbackRates: [0.5, 1, 1.25, 1.5, 1.75, 2],
-    sources: [{src: props.videoUrl, type: 'video/mp4'}],
-    poster: props.previewUrl,
+    sources: [{src: props.content.video_url, type: 'video/mp4'}],
+    poster: props.content.preview_url,
     experimentalSvgIcons: true,
 };
 
@@ -34,39 +32,23 @@ const handleVideoEnd = () => {
     showPopup.value = true;
 };
 
-const handleTimeUpdate = () => {
-    if (!player.value?.player) return;
-    const currentTime = player.value.player.currentTime();
 
-    if (currentTime > lastRecordedTime.value) {
-        actualWatchTime.value += currentTime - lastRecordedTime.value;
-    }
-
-    lastRecordedTime.value = currentTime;
-};
-
-const sendProgressUpdate = () => {
-    axios.post('/api/video-progress', {
-        videoId: props.videoId,
-        progress: actualWatchTime.value,
+const handleVideoStart = () => {
+    axios.post(route('views.view', props.content.id),{time:0}).then(response => {
+        console.log('View created:', response.data.message);
+    }).catch(e => {
+        console.error('View creation error:', e.messages);
     })
-        .then(response => {
-            console.log('Progress updated:', response.data);
-        })
-        .catch(error => {
-            console.error('Error updating progress:', error);
-        });
-};
+}
 
 const submitReview = () => {
-    if (is75PercentWatched.value) {
-        console.log('Rating:', rating.value);
-        console.log('Comment:', comment.value);
-        showPopup.value = false;
-    } else {
-        alert('You must watch at least 75% of the video to submit a comment.');
-    }
+    emit('review', {
+        rating: rating.value,
+        content: comment.value,
+    });
+    showPopup.value = false;
 };
+
 const startWatchTimer = () => {
     if (watchTimer) clearInterval(watchTimer);
 
@@ -121,6 +103,7 @@ onBeforeUnmount(() => {
     }
     stopWatchTimer();
 });
+
 </script>
 
 <template>
@@ -130,15 +113,12 @@ onBeforeUnmount(() => {
             data-setup='{ "html5" : { "nativeTextTracks" : false } }'
             ref="player"
             :options="videoOptions"
+            @play="handleVideoStart"
             @ended="handleVideoEnd"
         />
-        <div class="mt-2">
-            <p><strong>Watched:</strong> {{ actualWatchTime.toFixed(1) }} сек.</p>
-            <p><strong>Duration:</strong> {{ videoDuration }} сек.</p>
-        </div>
 
         <div v-if="showPopup" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div class="bg-white p-6 rounded-lg">
+            <div class="bg-white p-6 mt-2 rounded-lg">
                 <h3 class="text-xl font-bold mb-4">Rate and Comment</h3>
                 <div class="mb-4">
                     <label class="block mb-2">Rating:</label>

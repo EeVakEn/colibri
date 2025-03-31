@@ -5,8 +5,8 @@
 ## 🛠️ Технологии
 
 Проект использует следующие технологии:
-- **Backend**: Laravel
-- **Frontend**: Inertia.js + Vue 3
+- **Backend**: Laravel 11
+- **Frontend**: Inertia.js + Vue 3 + Node v20
 - **Routing**: Ziggy
 - **Аналитика видео**: Python-скрипты
 
@@ -39,6 +39,9 @@ php artisan ziggy:generate
 
 # Создание символической ссылки для хранения файлов
 php artisan storage:link
+
+# Запуск очереди
+php artisan queue:work --timeout 1000
 ```
 
 ## 📌 Контакты

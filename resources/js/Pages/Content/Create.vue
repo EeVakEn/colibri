@@ -6,12 +6,13 @@ export default {
 }
 </script>
 <script setup>
+import { createQuillEditor } from "@/quill-setup"
 import {useForm} from "@inertiajs/vue3";
 import VideoUpload from "@/UI/VideoUpload.vue";
 import {QuillEditor} from "@vueup/vue-quill";
 import ImageUpload from "@/UI/ImageUpload.vue";
 import {route} from "ziggy-js";
-import {computed} from "vue";
+import {computed, onMounted} from "vue";
 
 const props = defineProps({
     types: Object,
@@ -36,10 +37,17 @@ if (channelId in props.channels) {
 const submit = () => {
     form.post(route('contents.store'))
 }
+
+let editor = null;
+onMounted(() => {
+    editor = createQuillEditor("#editor", form.content, (newContent) => {
+        form.content = newContent;
+    });
+});
 </script>
 
 <template>
-    <h1 class="font-bold text-lg">Content Creation</h1>
+    <h1 class="font-bold text-lg">Post Creation</h1>
     <form @submit.prevent="submit">
         <div class="flex md:flex-row-reverse flex-col gap-4">
             <div class="lg:w-1/4 md:w-1/2 w-full">
@@ -67,15 +75,13 @@ const submit = () => {
 
             </div>
             <div class="lg:w-3/4 md:w-1/2 w-full">
-                <div class="my-2">
+                <div v-if="form.type==='video'" class="my-2">
                     <label class="input-label">Video</label>
                     <VideoUpload v-model="form.video" class="aspect-video"/>
                 </div>
                 <div class="my-2">
                     <label class="input-label">{{contentLabel}}</label>
-                    <QuillEditor :placeholder="`${contentLabel}...`" theme="snow"
-                                 contentType="html"
-                                 v-model:content="form.content"/>
+                    <div id="editor" class="h-40"></div>
                 </div>
             </div>
         </div>

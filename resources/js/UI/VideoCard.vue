@@ -27,7 +27,7 @@ defineProps({
                     <h3 class="mt-0.5 text-lg inline text-gray-900 truncate">{{ video.title }}</h3>
                 </div>
                 <div class="flex flex-1 items-end justify-between">
-                    <span class="w-1/2 block text-xs text-gray-500">{{ video.views ?? 0 }} Views</span>
+                    <span class="w-1/2 block text-xs text-gray-500">{{ video.views_count ?? 0 }} Views</span>
                     <time datetime="2022-10-10" class="w-1/2 text-right block text-xs text-gray-500">{{ moment(video.created_at).fromNow() }}</time>
                 </div>
             </div>

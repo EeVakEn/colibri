@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Container\Attributes\Storage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,6 +10,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Channel extends Model
 {
     public $guarded = [];
+
+    protected $appends = ['is_subscribed', 'subs_count'];
 
     public function user(): BelongsTo
     {
@@ -24,4 +27,14 @@ class Channel extends Model
     {
         return $this->hasMany(Content::class);
     }
+
+    public function getIsSubscribedAttribute(): bool
+    {
+        return $this->subscriptions()->active()->where('user_id', auth()->id())->exists() ?? false;
+    }
+    public function getSubsCountAttribute(): int
+    {
+        return $this->subscriptions()->active()->count() ?? 0;
+    }
+
 }

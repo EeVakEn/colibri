@@ -19,17 +19,17 @@ class Content extends Model
         'video',
         'preview',
         'processed_at',
+        'processing_error',
     ];
 
     const TYPE_VIDEO = 'video';
     const TYPE_ARTICLE = 'article';
 
-    protected $appends = ['video_url', 'preview_url'];
+    protected $appends = ['video_url', 'preview_url', 'views_count'];
 
     protected static function booted()
     {
         static::saving(function ($content) {
-            // Удаление и загрузка нового превью
             if (request()->hasFile('preview')) {
                 if ($content->getOriginal('preview')) {
                     Storage::disk('public')->delete($content->getOriginal('preview'));
@@ -37,7 +37,6 @@ class Content extends Model
                 $content->preview = request()->file('preview')->store('previews', 'public');
             }
 
-            // Удаление и загрузка нового видео
             if (request()->hasFile('video')) {
                 if ($content->getOriginal('video')) {
                     Storage::disk('public')->delete($content->getOriginal('video'));
@@ -92,4 +91,23 @@ class Content extends Model
         return $this->belongsToMany(Skill::class)->withPivot('depth', 'activated_at');
     }
 
+    public function activeSkills(): BelongsToMany
+    {
+        return $this->belongsToMany(Skill::class)->wherePivotNotNull('activated_at')->withPivot('depth', 'activated_at');
+    }
+
+    public function views(): HasMany
+    {
+        return $this->hasMany(View::class);
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function getViewsCountAttribute(): ?int
+    {
+        return $this->views()->count();
+    }
 }

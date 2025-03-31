@@ -5,9 +5,11 @@ import Multiselect from "vue-multiselect";
 
 import {defineComponent, ref, useTemplateRef} from "vue";
 import {Link, router} from "@inertiajs/vue3";
-import {X, Check, ChevronDown} from 'lucide-vue-next'
+import {X, Info, Check, ChevronDown, Video, Newspaper} from 'lucide-vue-next'
 import Dropdown from "@/UI/Dropdown.vue";
 import Modal from "@/UI/Modal.vue";
+import {toast} from "vue3-toastify";
+import axios from "axios";
 
 const tableRef = useTemplateRef('table');
 defineComponent({
@@ -24,6 +26,22 @@ const deleteContent = (url) => {
         }
     })
 }
+const analyzeSkills = (url) => {
+    axios.post(url).then(resp=> {
+        toast.success(resp.data.success)
+    }).catch(e => {
+        toast.error(e.message)
+    })
+}
+
+const ucfirst = (str) => {
+    if (!str) return "";
+    return str[0].toUpperCase() + str.slice(1);
+}
+const ucwords = (str) => {
+    return str.split(" ").map(word => ucfirst(word)).join(" ");
+}
+
 const formatData = (data) => {
     return moment(data).fromNow()
 }
@@ -97,7 +115,15 @@ export default {
             <Link :href="route('contents.show', [data.id])"><img class="h-[50px]" :src="data.preview_url"/></Link>
         </template>
         <template #cell(type)="{data}">
-            {{ data.type }}
+            <span v-if="data.type === 'video'">
+                <Video title="Video"/>
+            </span>
+            <span v-else-if="data.type === 'article'">
+                <Newspaper title="Article"/>
+            </span>
+            <span v-else>
+                {{ucfirst(data.type)}}
+            </span>
         </template>
         <template #cell(title)="{data}">
             <Link :href="route('contents.show', [data.id])">{{ data.title }}</Link>
@@ -115,13 +141,19 @@ export default {
         <template #cell(processed_at)="{data}">
             <template v-if="data.processed_at && getActivatedSkills(data.skills).length">
                 <span class="bg-indigo-50 text-indigo-500 text-xs font-medium mr-2 px-1.5 py-1 rounded-full"
-                      v-for="skill in getActivatedSkills(data.skills)">{{ skill.name }} - Depth: {{skill.pivot.depth}}</span>
+                      v-for="skill in getActivatedSkills(data.skills)">{{ ucwords(skill.name) }} - Depth: {{skill.pivot.depth}}</span>
             </template>
             <template v-else>
                 <span v-if="data.processed_at"
                       class="bg-yellow-600 text-white text-xs font-medium mr-2 px-1.5 py-1 rounded-full"
                       @click="openSkillsModal(data.skills, data.id)">Select the skills</span>
-                <span v-else class="bg-yellow-600 text-white text-xs font-medium mr-2 px-1.5 py-1 rounded-full">Processing</span>
+                <span v-else-if="!data.processing_error" class="bg-yellow-600 text-white text-xs font-medium mr-2 px-1.5 py-1 rounded-full">
+                    Processing
+                </span>
+                <span v-else class="bg-red-600 text-white text-xs font-medium mr-2 px-1.5 py-1 rounded-full"
+                      :title="data.processing_error">
+                    Skills Extract Error <Info class="inline ml-1 mb-1 center" :size="20" />
+                </span>
             </template>
         </template>
         <template #cell(actions)="{data}">
@@ -132,6 +164,10 @@ export default {
                 <div class="m-2">
                     <Link :href="route('contents.show', [data.id])" class="hover-li font-bold">Show</Link>
                     <Link :href="route('contents.edit', [data.id])" class="hover-li font-bold">Edit</Link>
+                    <Link v-if="!data.skills.length && data.processing_error" @click="analyzeSkills(route('contents.skills.analyzeSkills', [data.id]))"
+                          class="hover-li hover:bg-red-100 font-bold">
+                        Analyze Skills
+                    </Link>
                     <Link @click="deleteContent(route('contents.destroy', [data.id]))"
                           class="hover-li hover:bg-red-100 font-bold">
                         Delete

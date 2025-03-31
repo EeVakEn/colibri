@@ -59,4 +59,14 @@ class User extends Authenticatable
     {
         return $this->hasManyThrough(Content::class, Channel::class);
     }
+
+    public function subscriptions(): HasMany
+    {
+        return $this->hasMany(Subscription::class)->with('channel');
+    }
+
+    public function views(): HasMany
+    {
+        return $this->hasMany(View::class);
+    }
 }
