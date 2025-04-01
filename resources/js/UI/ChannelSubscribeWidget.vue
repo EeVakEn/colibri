@@ -4,7 +4,7 @@ import Avatar from "@/UI/Avatar.vue";
 import {Link} from '@inertiajs/vue3'
 import moment from "moment/moment";
 import Modal from "@/UI/Modal.vue";
-import {ref} from "vue";
+import {ref, defineProps} from "vue";
 import { toast } from 'vue3-toastify'
 import axios from "axios";
 
@@ -19,12 +19,13 @@ const props = defineProps({
     className: {
         type: String,
         default: 'cursor-pointer border-2 border-indigo-700 w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden'
-    }
+    },
+    user: Object,
 })
 
 let isOpenModal = ref(false)
 let localChannel = ref(props.channel)
-
+let isDepositModalOpen = ref(false);
 const subscribe = async (isForce = false) => {
     if (!props.channel.is_free && !isForce) {
         open();
@@ -34,12 +35,14 @@ const subscribe = async (isForce = false) => {
     try {
         const response = await axios.post(route('subscription.subscribe', props.channel.id), []);
         localChannel.value = response.data.channel;
-        console.log(localChannel.value)
-        // Show success toast
         toast.success(response.data.success || "Successfully subscribed!");
     } catch (e) {
-        // Show error toast
-        toast.error(e.response?.data?.error || "Subscription failed!");
+        console.log(e.response)
+        if (e.response.status === 402) {
+            openDepositModal();
+        } else {
+            toast.error(e.response?.data?.error || "Subscription failed!");
+        }
     } finally {
         close();
     }
@@ -61,6 +64,12 @@ const unsubscribe = async () => {
     }
 };
 
+const openDepositModal = () => {
+    isDepositModalOpen.value = true;
+};
+const closeDepositModal = () => {
+    isDepositModalOpen.value = false;
+};
 
 const open = () => {
     isOpenModal.value = true;
@@ -98,6 +107,18 @@ const close = () => {
             </div>
         </div>
     </modal>
+    <Modal v-model="isDepositModalOpen">
+        <div class="flex flex-col gap-5">
+            <h2><b>Insufficient funds</b></h2>
+            <p>Your balance is <b>${{ props.user.balance }}</b>, but you need <b>${{ localChannel.subscription_price }}</b>.</p>
+            <div class="flex justify-end">
+                <div class="flex flex-row flex-nowrap gap-2">
+                    <a class="btn-muted" @click.prevent="closeDepositModal">Cancel</a>
+                    <Link :href="route('account.wallet.index')" target="_blank" class="btn-primary">Top up wallet</Link>
+                </div>
+            </div>
+        </div>
+    </Modal>
 </template>
 
 <style scoped>

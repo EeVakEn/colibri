@@ -10,6 +10,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\ViewController;
+use App\Http\Controllers\WalletController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -70,4 +71,11 @@ Route::middleware(['auth'])->name('views.')->prefix('views')->group(function () 
 // Review Service
 Route::middleware(['auth'])->name('review.')->prefix('review/{content}')->group(function () {
     Route::post('/', [ReviewController::class, 'store'])->name('store');
+});
+
+// Wallet Controller
+Route::middleware(['auth'])->name('account.wallet.')->prefix('account/wallet')->group(function () {
+    Route::get('/', [WalletController::class, 'index'])->name('index');
+    Route::post('/deposit', [WalletController::class, 'deposit'])->name('deposit');
+    Route::post('/withdraw', [WalletController::class, 'withdraw'])->name('withdraw');
 });

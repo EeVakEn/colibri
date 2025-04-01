@@ -36,6 +36,14 @@ const submit = () => {
 }
 </script>
 
+<script>
+import AccountLayout from "@/Layouts/AccountLayout.vue";
+
+export default {
+    layout: AccountLayout
+}
+</script>
+
 <template>
     <div class="flex justify-between items-center mb-7">
         <h1 class="text-2xl font-bold">Create Channel</h1>

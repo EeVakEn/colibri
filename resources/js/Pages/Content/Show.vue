@@ -10,6 +10,7 @@ import {onMounted} from "vue";
 
 const props = defineProps({
     content: Object,
+    user: Object,
 });
 const formatData = (data) => {
     return moment(data).fromNow()
@@ -65,7 +66,7 @@ export default {
                 <VideoPlayer :content="content" @review="addReview"/>
                 <div class="flex justify-between items-center mt-2">
                     <h2 class="text-2xl font-bold my-3">{{ content.title }}</h2>
-                    <ChannelSubscribeWidget :channel="content.channel"></ChannelSubscribeWidget>
+                    <ChannelSubscribeWidget :channel="content.channel" :user="user"></ChannelSubscribeWidget>
                 </div>
                 <div class="border rounded-lg p-3 my-3 bg-indigo-50 ">
                     <h3 class="text-md font-bold mb-3">Description</h3>
@@ -77,7 +78,7 @@ export default {
                 <div class="my-2">
                     <div class="flex justify-between items-center mt-2">
                         <h1 class="text-3xl font-bold my-3">{{ content.title }}</h1>
-                        <ChannelSubscribeWidget :channel="content.channel"></ChannelSubscribeWidget>
+                        <ChannelSubscribeWidget :channel="content.channel" :user="user"></ChannelSubscribeWidget>
                     </div>
 
                     <div><i class="text-gray-500">{{ content.views_count ?? 0 }} views {{ formatData(content.created_at) }}</i></div>

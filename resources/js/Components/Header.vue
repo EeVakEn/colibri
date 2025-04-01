@@ -53,10 +53,10 @@
                             <Brush class="mr-2 inline"/>
                             Studio
                         </Link>
-                        <Link href="#wallet" class="hover-li" >
+                        <Link :href="route('account.wallet.index')" class="hover-li" >
                             <Wallet class="mr-2 inline"/>
                             <span>Wallet</span>
-                            <span class="rounded float-right bg-[#1763F6] text-white font-medium px-2">$0</span>
+                            <span class="rounded float-right bg-[#1763F6] text-white font-medium px-2">${{user.balance}}</span>
                         </Link>
                         <a class="group hover-li hover:bg-red-100"  @click="logout">
                             <DoorClosed class="inline group-hover:hidden"/>

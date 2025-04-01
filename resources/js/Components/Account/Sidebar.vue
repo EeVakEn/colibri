@@ -43,6 +43,14 @@ function isActive(rt) {
             >
                 Studio
             </LinkWithIcon>
+            <LinkWithIcon
+                :link="route('account.wallet.index')"
+                icon="wallet"
+                class="hover-li"
+                :class="{'font-bold':isActive('account.wallet.index')}"
+            >
+                Wallet
+            </LinkWithIcon>
             <Link class="group hover-li hover:bg-red-100"  @click="logout">
                 <DoorClosed size="16" class="mr-2 inline group-hover:hidden"/>
                 <DoorOpen size="16" class="mr-2 hidden group-hover:inline"/>
