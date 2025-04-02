@@ -35,54 +35,57 @@ export default {
 }
 </script>
 <template>
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold">Channels</h1>
-        <Link class="btn-primary" :href="route('account.channels.create')">Create New</Link>
-    </div>
+    <div class="container">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold">Channels</h1>
+            <Link class="btn-primary" :href="route('account.channels.create')">Create New</Link>
+        </div>
 
-    <Table
-        ref="table"
-        :tableMeta="tableMeta"
-    >
-        <template #cell(avatar)="{data}">
-            <Link :href="route('account.channels.show', [data.id])">
-                <Avatar :user='data'></Avatar>
-            </Link>
-        </template>
-        <template #cell(name)="{data}">
-            <Link :href="route('account.channels.show', [data.id])">{{ data.name }}</Link>
-        </template>
-        <template #cell(description)="{data}">
-            <template v-if="descriptionShow === data.id">
-                <p class="text-wrap overflow-ellipsis" v-html="data.description"></p>
+        <Table
+            ref="table"
+            :tableMeta="tableMeta"
+        >
+            <template #cell(avatar)="{data}">
+                <Link :href="route('account.channels.show', [data.id])">
+                    <Avatar :user='data'></Avatar>
+                </Link>
             </template>
-            <span @click="toggleDescription(data.id)" class="text-indigo-600 cursor-pointer">
+            <template #cell(name)="{data}">
+                <Link :href="route('account.channels.show', [data.id])">{{ data.name }}</Link>
+            </template>
+            <template #cell(description)="{data}">
+                <template v-if="descriptionShow === data.id">
+                    <p class="text-wrap overflow-ellipsis" v-html="data.description"></p>
+                </template>
+                <span @click="toggleDescription(data.id)" class="text-indigo-600 cursor-pointer">
                 {{ data.id === descriptionShow ? 'Hide' : 'Show' }}
             </span>
-        </template>
-        <template #cell(is_free)="{item}">
-            <Check class="text-green-700" v-if="item"/>
-            <X class="text-red-700" v-else/>
-        </template>
-        <template #cell(subscription_price)="{item}">
-            <b v-if="item">${{ item }}</b>
-        </template>
-        <template #cell(actions)="{data}">
-            <Dropdown>
-                <template #button><b class="cursor-pointer">Actions
-                    <ChevronDown class="inline" :size="16"></ChevronDown>
-                </b></template>
-                <div class="m-2">
-                    <Link :href="route('account.channels.show', [data.id])" class="hover-li font-bold">Go to channel
-                    </Link>
-                    <Link :href="route('account.channels.edit', [data.id])" class="hover-li font-bold">Edit</Link>
-                    <Link @click="deleteChannel(route('account.channels.destroy', [data.id]))"
-                          class="hover-li hover:bg-red-100 font-bold">Delete
-                    </Link>
-                </div>
-            </Dropdown>
-        </template>
-    </Table>
+            </template>
+            <template #cell(is_free)="{item}">
+                <Check class="text-green-700" v-if="item"/>
+                <X class="text-red-700" v-else/>
+            </template>
+            <template #cell(subscription_price)="{item}">
+                <b v-if="item">${{ item }}</b>
+            </template>
+            <template #cell(actions)="{data}">
+                <Dropdown>
+                    <template #button><b class="cursor-pointer">Actions
+                        <ChevronDown class="inline" :size="16"></ChevronDown>
+                    </b></template>
+                    <div class="m-2">
+                        <Link :href="route('account.channels.show', [data.id])" class="hover-li font-bold">Go to channel
+                        </Link>
+                        <Link :href="route('account.channels.edit', [data.id])" class="hover-li font-bold">Edit</Link>
+                        <Link @click="deleteChannel(route('account.channels.destroy', [data.id]))"
+                              class="hover-li hover:bg-red-100 font-bold">Delete
+                        </Link>
+                    </div>
+                </Dropdown>
+            </template>
+        </Table>
+
+    </div>
 </template>
 
 <style scoped>

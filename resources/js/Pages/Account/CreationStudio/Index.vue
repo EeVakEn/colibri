@@ -74,108 +74,111 @@ export default {
 }
 </script>
 <template>
-    <modal v-model="isSkillModalOpen" @close="close">
-        <form :action="route('contents.skills.activate', contentId)" method="post">
-            <h2 class="font-bold mb-4">Select skills to activate</h2>
-            <label>Skills</label>
-            <input type="hidden" name="_token" :value="csrf">
-            <input v-for="as in activatedSkills" type="hidden" name="skill_ids[]" :value="as.id">
-            <multiselect
-                v-model="activatedSkills"
-                :options="skills"
-                :multiple="true"
-                :max="3"
-                :taggable="true"
-                :searchable="true"
-                :close-on-select="false"
-                :allow-empty="false"
-                placeholder="Select skill for recomendations"
-                label="name"
-                track-by="id"
-            >
-                <template #option="{option}">
-                    {{option.name}} - {{ option.pivot.depth}}
-                </template>
-            </multiselect>
-            <div class="flex justify-end">
-                <button class="btn-primary mt-3">Activate</button>
-            </div>
-        </form>
-    </modal>
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold">Creation Studio</h1>
-        <Link class="btn-primary" :href="route('contents.create')">Create New Post</Link>
-    </div>
+    <div class="container">
+        <modal v-model="isSkillModalOpen" @close="close">
+            <form :action="route('contents.skills.activate', contentId)" method="post">
+                <h2 class="font-bold mb-4">Select skills to activate</h2>
+                <label>Skills</label>
+                <input type="hidden" name="_token" :value="csrf">
+                <input v-for="as in activatedSkills" type="hidden" name="skill_ids[]" :value="as.id">
+                <multiselect
+                    v-model="activatedSkills"
+                    :options="skills"
+                    :multiple="true"
+                    :max="3"
+                    :taggable="true"
+                    :searchable="true"
+                    :close-on-select="false"
+                    :allow-empty="false"
+                    placeholder="Select skill for recomendations"
+                    label="name"
+                    track-by="id"
+                >
+                    <template #option="{option}">
+                        {{option.name}} - {{ option.pivot.depth}}
+                    </template>
+                </multiselect>
+                <div class="flex justify-end">
+                    <button class="btn-primary mt-3">Activate</button>
+                </div>
+            </form>
+        </modal>
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold">Creation Studio</h1>
+            <Link class="btn-primary" :href="route('contents.create')">Create New Post</Link>
+        </div>
 
-    <Table
-        ref="table"
-        :tableMeta="tableMeta"
-    >
-        <template #cell(preview_url)="{data}">
-            <Link :href="route('contents.show', [data.id])"><img class="h-[50px]" :src="data.preview_url"/></Link>
-        </template>
-        <template #cell(type)="{data}">
+        <Table
+            ref="table"
+            :tableMeta="tableMeta"
+        >
+            <template #cell(preview_url)="{data}">
+                <Link :href="route('contents.show', [data.id])"><img class="h-[50px]" :src="data.preview_url"/></Link>
+            </template>
+            <template #cell(type)="{data}">
             <span v-if="data.type === 'video'">
                 <Video title="Video"/>
             </span>
-            <span v-else-if="data.type === 'article'">
+                <span v-else-if="data.type === 'article'">
                 <Newspaper title="Article"/>
             </span>
-            <span v-else>
+                <span v-else>
                 {{ucfirst(data.type)}}
             </span>
-        </template>
-        <template #cell(title)="{data}">
-            <Link :href="route('contents.show', [data.id])">{{ data.title }}</Link>
-        </template>
-        <template #cell(channel_name)="{data}">
-            <Link :href="route('account.channels.show', [data.channel_id])">{{ data.channel_name }}</Link>
-        </template>
-        <template #cell(created_at)="{data}">
-            {{ formatData(data.created_at) }}
-        </template>
+            </template>
+            <template #cell(title)="{data}">
+                <Link :href="route('contents.show', [data.id])">{{ data.title }}</Link>
+            </template>
+            <template #cell(channel_name)="{data}">
+                <Link :href="route('account.channels.show', [data.channel_id])">{{ data.channel_name }}</Link>
+            </template>
+            <template #cell(created_at)="{data}">
+                {{ formatData(data.created_at) }}
+            </template>
 
-        <template #cell(updated_at)="{data}">
-            {{ formatData(data.updated_at) }}
-        </template>
-        <template #cell(processed_at)="{data}">
-            <template v-if="data.processed_at && getActivatedSkills(data.skills).length">
+            <template #cell(updated_at)="{data}">
+                {{ formatData(data.updated_at) }}
+            </template>
+            <template #cell(processed_at)="{data}">
+                <template v-if="data.processed_at && getActivatedSkills(data.skills).length">
                 <span class="bg-indigo-50 text-indigo-500 text-xs font-medium mr-2 px-1.5 py-1 rounded-full"
                       v-for="skill in getActivatedSkills(data.skills)">{{ ucwords(skill.name) }} - Depth: {{skill.pivot.depth}}</span>
-            </template>
-            <template v-else>
+                </template>
+                <template v-else>
                 <span v-if="data.processed_at"
                       class="bg-yellow-600 text-white text-xs font-medium mr-2 px-1.5 py-1 rounded-full"
                       @click="openSkillsModal(data.skills, data.id)">Select the skills</span>
-                <span v-else-if="!data.processing_error" class="bg-yellow-600 text-white text-xs font-medium mr-2 px-1.5 py-1 rounded-full">
+                    <span v-else-if="!data.processing_error" class="bg-yellow-600 text-white text-xs font-medium mr-2 px-1.5 py-1 rounded-full">
                     Processing
                 </span>
-                <span v-else class="bg-red-600 text-white text-xs font-medium mr-2 px-1.5 py-1 rounded-full"
-                      :title="data.processing_error">
+                    <span v-else class="bg-red-600 text-white text-xs font-medium mr-2 px-1.5 py-1 rounded-full"
+                          :title="data.processing_error">
                     Skills Extract Error <Info class="inline ml-1 mb-1 center" :size="20" />
                 </span>
+                </template>
             </template>
-        </template>
-        <template #cell(actions)="{data}">
-            <Dropdown>
-                <template #button><b class="cursor-pointer">Actions
-                    <ChevronDown class="inline" :size="16"></ChevronDown>
-                </b></template>
-                <div class="m-2">
-                    <Link :href="route('contents.show', [data.id])" class="hover-li font-bold">Show</Link>
-                    <Link :href="route('contents.edit', [data.id])" class="hover-li font-bold">Edit</Link>
-                    <Link v-if="!data.skills.length && data.processing_error" @click="analyzeSkills(route('contents.skills.analyzeSkills', [data.id]))"
-                          class="hover-li hover:bg-red-100 font-bold">
-                        Analyze Skills
-                    </Link>
-                    <Link @click="deleteContent(route('contents.destroy', [data.id]))"
-                          class="hover-li hover:bg-red-100 font-bold">
-                        Delete
-                    </Link>
-                </div>
-            </Dropdown>
-        </template>
-    </Table>
+            <template #cell(actions)="{data}">
+                <Dropdown>
+                    <template #button><b class="cursor-pointer">Actions
+                        <ChevronDown class="inline" :size="16"></ChevronDown>
+                    </b></template>
+                    <div class="m-2">
+                        <Link :href="route('contents.show', [data.id])" class="hover-li font-bold">Show</Link>
+                        <Link :href="route('contents.edit', [data.id])" class="hover-li font-bold">Edit</Link>
+                        <Link v-if="!data.skills.length && data.processing_error" @click="analyzeSkills(route('contents.skills.analyzeSkills', [data.id]))"
+                              class="hover-li hover:bg-red-100 font-bold">
+                            Analyze Skills
+                        </Link>
+                        <Link @click="deleteContent(route('contents.destroy', [data.id]))"
+                              class="hover-li hover:bg-red-100 font-bold">
+                            Delete
+                        </Link>
+                    </div>
+                </Dropdown>
+            </template>
+        </Table>
+    </div>
+
 </template>
 
 <style src="vue-multiselect/dist/vue-multiselect.css"></style>

@@ -20,6 +20,7 @@ class Content extends Model
         'preview',
         'processed_at',
         'processing_error',
+        'duration',
     ];
 
     const TYPE_VIDEO = 'video';
@@ -27,7 +28,7 @@ class Content extends Model
 
     protected $appends = ['video_url', 'preview_url', 'views_count'];
 
-    protected static function booted()
+    protected static function booted(): void
     {
         static::saving(function ($content) {
             if (request()->hasFile('preview')) {
@@ -41,7 +42,10 @@ class Content extends Model
                 if ($content->getOriginal('video')) {
                     Storage::disk('public')->delete($content->getOriginal('video'));
                 }
-                $content->video = request()->file('video')->store('videos', 'public');
+                $videoFile = request()->file('video');
+                $info =  ContentService::saveVideo($videoFile);
+                $content->duration = $info['duration'];
+                $content->video = $info['path'];
             }
         });
 
@@ -109,5 +113,10 @@ class Content extends Model
     public function getViewsCountAttribute(): ?int
     {
         return $this->views()->count();
+    }
+
+    public function contentSkills()
+    {
+        return $this->hasMany(ContentSkill::class, 'content_id');
     }
 }

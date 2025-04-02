@@ -43,6 +43,8 @@ Route::prefix('account')->name('account.')->middleware(['auth'])->group(function
         Route::put('/', 'update')->name('update');
         Route::post('/upload-avatar', 'uploadAvatar')->name('upload.avatar');
     });
+    Route::get('/skills', [AccountController::class, 'skills'])->name('skills');
+    Route::get('/history', [AccountController::class, 'history'])->name('history');
     Route::resource('channels', ChannelController::class)->middleware('auth');
 
     Route::prefix('studio')->name('studio.')->controller(CreationStudioController::class)->group(function () {

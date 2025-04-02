@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AccountUpdateRequest;
+use App\Services\Table\ContentTable;
+use App\Services\Table\HistoryTable;
+use App\Services\Table\SkillsTable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -12,9 +15,31 @@ use Inertia\Response as InertiaResponse;
 
 class AccountController extends Controller
 {
-    public function account(): InertiaResponse
+    public function __construct(
+        protected readonly SkillsTable $skillsTable,
+        protected readonly HistoryTable $historyTable,
+    )
     {
-        return Inertia::render('Account/Index');
+    }
+
+    public function account(Request $request): InertiaResponse
+    {
+        return Inertia::render('Account/Index', [
+            'skillsTableMeta' => $this->skillsTable->getMeta(),
+            'historyTableMeta' => $this->historyTable->getMeta(),
+            'skill_max_score' => auth()->user()->skill_max_score,
+            'csrf' => csrf_token(),
+        ]);
+    }
+
+    public function skills(Request $request): JsonResponse
+    {
+        return response()->json(['data' => $this->skillsTable->getData($request)]);
+    }
+
+    public function history(Request $request): JsonResponse
+    {
+        return response()->json(['data' => $this->historyTable->getData($request)]);
     }
 
     public function uploadAvatar(Request $request): JsonResponse
@@ -40,6 +65,6 @@ class AccountController extends Controller
     public function update(AccountUpdateRequest $request): InertiaResponse
     {
         auth()->user()->update($request->validated());
-        return Inertia::render('Account/Index')->with(['message'=>'Successfully updated']);
+        return Inertia::render('Account/Index')->with(['message' => 'Successfully updated']);
     }
 }

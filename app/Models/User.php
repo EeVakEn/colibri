@@ -29,7 +29,7 @@ class User extends Authenticatable
     ];
 
 
-    protected $appends = ['balance'];
+    protected $appends = ['balance', 'skill_max_score'];
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -73,13 +73,17 @@ class User extends Authenticatable
         return $this->hasMany(View::class);
     }
 
+    public function viewsWithContent(): HasMany
+    {
+        return $this->hasMany(View::class)->with('content.activeSkills');
+    }
+
 
     protected function balance(): Attribute
     {
-        return Attribute::get(fn () =>
-            $this->transactions()
-                ->selectRaw("SUM(CASE WHEN `to_id` = ? THEN amount ELSE -amount END) as balance", [$this->id])
-                ->value('balance') ?? 0
+        return Attribute::get(fn() => $this->transactions()
+            ->selectRaw("SUM(CASE WHEN `to_id` = ? THEN amount ELSE -amount END) as balance", [$this->id])
+            ->value('balance') ?? 0
         );
     }
 
@@ -95,8 +99,7 @@ class User extends Authenticatable
 
     protected function transactionHistory(): Attribute
     {
-        return Attribute::get(fn () =>
-        $this->transactions()
+        return Attribute::get(fn() => $this->transactions()
             ->orderByDesc('created_at')
             ->get()
             ->map(function ($transaction) {
@@ -118,4 +121,29 @@ class User extends Authenticatable
         return Transaction::where('from_id', $this->id)
             ->orWhere('to_id', $this->id);
     }
+
+    public function getSkillsAttribute(): array
+    {
+        return $this->skillsQuery()->get()->toArray();
+    }
+
+    public function skillsQuery()
+    {
+        return Skill::query()
+            ->select('skills.*', \DB::raw('SUM(content_skill.depth * contents.duration) / 100 as total_score'))
+            ->join('content_skill', 'skills.id', '=', 'content_skill.skill_id')
+            ->join('contents', 'content_skill.content_id', '=', 'contents.id')
+            ->join('views', 'contents.id', '=', 'views.content_id')
+            ->where('views.user_id', $this->id)
+            ->whereNotNull('content_skill.activated_at')
+            ->groupBy('skills.id', 'skills.name')
+            ->havingRaw('SUM(content_skill.depth * contents.duration) / 100 > 0')
+            ->orderBy('total_score', 'DESC');
+    }
+
+    public function getSkillMaxScoreAttribute(): int
+    {
+        return (int)$this->skillsQuery()->first()->total_score ?? 0;
+    }
+
 }

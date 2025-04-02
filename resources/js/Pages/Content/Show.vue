@@ -59,7 +59,7 @@ export default {
 
 
 <template>
-    <div class="grid grid-cols-[5fr_1fr] gap-10">
+    <div class="grid grid-cols-[5fr_1fr] gap-10 v">
         <main class="mx-10">
             <Head :title="content.title"/>
             <template v-if="content.type==='video'">

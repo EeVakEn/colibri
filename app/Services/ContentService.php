@@ -6,6 +6,8 @@ use App\Jobs\AnalyzeSkillsJob;
 use App\Jobs\TranscribeVideoJob;
 use App\Models\Content;
 use App\Models\Skill;
+use FFMpeg\FFMpeg;
+use FFMpeg\Format\Video\X264;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Ramsey\Uuid\Uuid;
@@ -91,6 +93,28 @@ class ContentService
             throw new \RuntimeException('Text analyze error');
         }
         return collect(json_decode($process->getOutput()))->shift(5);
+    }
+
+    public static function saveVideo($videoFile): array
+    {
+        if (is_string($videoFile)) {
+            $filePath = $videoFile;
+        } else {
+            $uuid = Uuid::uuid4()->toString();
+            $extension = $videoFile->getClientOriginalExtension();
+            $uniqueFileName = $uuid . '.' . $extension;
+            $filePath = 'videos/' . $uniqueFileName;
+            Storage::disk('public')->putFileAs('videos', $videoFile, $uniqueFileName);
+        }
+
+        return ['path' => $filePath, 'duration' => self::getDuration(Storage::disk('public')->path($filePath))];
+    }
+
+    public static function getDuration($filePath): float
+    {
+        $ffmpeg = FFMpeg::create();
+        $video = $ffmpeg->open($filePath);
+        return $video->getFormat()->get('duration');
     }
 }
 
