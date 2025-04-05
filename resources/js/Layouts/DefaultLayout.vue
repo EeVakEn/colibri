@@ -7,7 +7,7 @@
         <Header :user="page.props.user"/>
 
         <!-- Main Content -->
-        <main class="flex-grow container-full flex flex-row">
+        <main class="flex-grow container-full flex flex-row mt-[78px]">
             <!-- Sidebar -->
             <Sidebar class="border-slate-100 border-r-2"/>
 

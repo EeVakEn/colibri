@@ -14,7 +14,21 @@ class ChannelTable extends Table
     function getData(Request $request, bool $paginate = true, ...$params): array
     {
         $requestData = $request->all();
-        $query = auth()->user()->channels()->getQuery();
+        $oneMonthAgo = now()->subMonth();
+
+        // Основной запрос с подсчетом активных подписок
+        $query = auth()->user()->channels()
+            ->leftJoin('subscriptions', function ($join) use ($oneMonthAgo) {
+                $join->on('channels.id', '=', 'subscriptions.channel_id')
+                    ->where(function ($q) use ($oneMonthAgo) {
+                        $q->where('subscriptions.amount', '>', 0)
+                            ->whereDate('subscriptions.created_at', '>=', $oneMonthAgo)
+                            ->orWhere('subscriptions.amount', 0);
+                    });
+            })
+            ->addSelect('channels.*')
+            ->addSelect(\DB::raw('COUNT(subscriptions.id) as subscriptions_count'))
+            ->groupBy('channels.id')->getQuery();
 
         $query = $this->filter($query, $requestData);
         $query = $this->sort($query, $requestData);
@@ -25,6 +39,7 @@ class ChannelTable extends Table
     {
         return [
             ['label' => 'Avatar', 'field' => 'avatar', 'sortable' => true],
+            ['label' => 'Subscriptions', 'field' => 'subscriptions_count', 'sortable' => true],
             ['label' => 'Name', 'field' => 'name', 'sortable' => true],
             ['label' => 'Description', 'field' => 'description', 'td-class'=>'w-1/2'],
             ['label' => 'Is Free', 'field' => 'is_free', 'sortable' => true],

@@ -16,11 +16,10 @@ const props = defineProps({
 
 const value = ref(props.value);
 const max = ref(props.max);
-const color = ref(props.color);
 </script>
 
 <template>
-    <div class="relative w-full h-8 bg-gray-200 rounded-full overflow-hidden">
+    <div class="w-full relative w-full h-8 bg-gray-200 rounded-full overflow-hidden">
         <div
             class="absolute top-0 left-0 h-full transition-all duration-300 bg-indigo-600"
             :style="{ width: `${(value / max) * 100}%`}"

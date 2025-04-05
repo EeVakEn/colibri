@@ -5,7 +5,7 @@
         <Header :user="page.props.user"></Header>
 
         <!-- Main Content -->
-        <main class="flex-grow container-full flex flex-row">
+        <main class="flex-grow container-full flex flex-row mt-[78px]">
             <Sidebar class="border-slate-100 border-r-2"/>
             <div class="py-8 px-4 w-full">
                 <slot/>

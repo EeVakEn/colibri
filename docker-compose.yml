@@ -45,6 +45,16 @@ services:
                 - '-p${DB_PASSWORD}'
             retries: 3
             timeout: 5s
+    typesense:
+        image: typesense/typesense:28.0
+        restart: on-failure
+        ports:
+            - "8108:8108"
+        volumes:
+            - ./typesense-data:/data
+        command: '--data-dir /data --api-key=xyz --enable-cors'
+        networks:
+            - sail
 networks:
     sail:
         driver: bridge

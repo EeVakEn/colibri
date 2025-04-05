@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
 
 class User extends Authenticatable
 {
@@ -122,9 +123,9 @@ class User extends Authenticatable
             ->orWhere('to_id', $this->id);
     }
 
-    public function getSkillsAttribute(): array
+    public function getSkillsAttribute(): Collection
     {
-        return $this->skillsQuery()->get()->toArray();
+        return $this->skillsQuery()->get();
     }
 
     public function skillsQuery()
@@ -137,13 +138,12 @@ class User extends Authenticatable
             ->where('views.user_id', $this->id)
             ->whereNotNull('content_skill.activated_at')
             ->groupBy('skills.id', 'skills.name')
-            ->havingRaw('SUM(content_skill.depth * contents.duration) / 100 > 0')
-            ->orderBy('total_score', 'DESC');
+            ->havingRaw('SUM(content_skill.depth * contents.duration) / 100 > 0');
     }
 
     public function getSkillMaxScoreAttribute(): int
     {
-        return (int)$this->skillsQuery()->first()->total_score ?? 0;
+        return (int)$this->skillsQuery()->orderBy('total_score', 'DESC')->first()->total_score ?? 0;
     }
 
 }

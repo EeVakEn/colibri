@@ -42,6 +42,10 @@ php artisan storage:link
 
 # Запуск очереди
 php artisan queue:work --timeout 1000
+
+php artisan scout:import App\\Models\\Content
+curl -X DELETE http://typesense:8108/collections/content_index   -H "X-TYPESENSE-API-KEY: xyz"
+
 ```
 
 ## 📌 Контакты

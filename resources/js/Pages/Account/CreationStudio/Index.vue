@@ -10,6 +10,7 @@ import Dropdown from "@/UI/Dropdown.vue";
 import Modal from "@/UI/Modal.vue";
 import {toast} from "vue3-toastify";
 import axios from "axios";
+import ChannelViewsChart from "@/UI/ChannelViewsChart.vue";
 
 const tableRef = useTemplateRef('table');
 defineComponent({
@@ -107,6 +108,8 @@ export default {
             <h1 class="text-2xl font-bold">Creation Studio</h1>
             <Link class="btn-primary" :href="route('contents.create')">Create New Post</Link>
         </div>
+
+        <ChannelViewsChart></ChannelViewsChart>
 
         <Table
             ref="table"

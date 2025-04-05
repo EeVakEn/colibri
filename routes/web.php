@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ApiController;
 use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AccountController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\ViewController;
 use App\Http\Controllers\WalletController;
+use App\Models\Content;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -20,6 +22,7 @@ Route::controller(HomeController::class)
     ->group(function () {
         Route::get('/', [HomeController::class, 'videos'])->name('videos');
         Route::get('/articles', [HomeController::class, 'articles'])->name('articles');
+        Route::get('/search', [HomeController::class, 'search'])->name('search');
     });
 
 Route::controller(AuthController::class)
@@ -63,11 +66,13 @@ Route::controller(ContentController::class)->name('contents.')->prefix('contents
 Route::middleware(['auth'])->name('subscription.')->prefix('subscription')->group(function () {
     Route::post('/{channel}/subscribe', [SubscriptionController::class, 'subscribe'])->name('subscribe');
     Route::post('/{channel}/unsubscribe', [SubscriptionController::class, 'unsubscribe'])->name('unsubscribe');
+    Route::get('/getSubscriptionsByChannel', [SubscriptionController::class, 'getSubscriptionsByChannel'])->name('getSubscriptionsByChannel');
 });
 
 // Views Service
 Route::middleware(['auth'])->name('views.')->prefix('views')->group(function () {
     Route::post('/{content}/view', [ViewController::class, 'view'])->name('view');
+    Route::get('/getViewsByChannel', [ViewController::class, 'getViewsByChannel'])->name('getViewsByChannel');
 });
 
 // Review Service
@@ -80,4 +85,12 @@ Route::middleware(['auth'])->name('account.wallet.')->prefix('account/wallet')->
     Route::get('/', [WalletController::class, 'index'])->name('index');
     Route::post('/deposit', [WalletController::class, 'deposit'])->name('deposit');
     Route::post('/withdraw', [WalletController::class, 'withdraw'])->name('withdraw');
+});
+
+
+
+//API
+Route::name('api.')->prefix('api')->group(function () {
+    Route::get('/content/{type?}', [ApiController::class, 'content'])->name('content')
+        ->where('type', implode('|', Content::TYPES));;
 });

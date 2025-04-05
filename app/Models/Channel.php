@@ -6,6 +6,7 @@ use Illuminate\Container\Attributes\Storage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Channel extends Model
 {
@@ -20,7 +21,12 @@ class Channel extends Model
 
     public function subscriptions(): HasMany
     {
-        return $this->hasMany(Subscription::class)->where('created_at', '>', now()->subMonth());
+        return $this->hasMany(Subscription::class);
+    }
+
+    public function activeSubscriptions(): HasMany
+    {
+        return $this->subscriptions()->active();
     }
 
     public function contents(): HasMany
@@ -34,7 +40,12 @@ class Channel extends Model
     }
     public function getSubsCountAttribute(): int
     {
-        return $this->subscriptions()->active()->count() ?? 0;
+        return $this->activeSubscriptions()->count() ?? 0;
+    }
+
+    public function views(): HasManyThrough
+    {
+        return $this->hasManyThrough(View::class, Content::class);
     }
 
 }

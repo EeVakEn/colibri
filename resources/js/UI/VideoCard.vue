@@ -15,11 +15,11 @@ defineProps({
 
 <template>
     <Link :href="route('contents.show', video.id)">
-        <article class="overflow-hidden rounded-lg shadow transition hover:shadow-lg w-[300px]">
+        <article class="overflow-hidden rounded-lg shadow transition hover:shadow-lg w-full">
             <img
                 :alt="video.title"
                 :src="'/storage/' + video.preview"
-                class="h-56 object-cover aspect-video"
+                class="md:h-72 h-56 object-cover aspect-video"
             />
             <div class="bg-white p-2 sm:p-3 flex flex-col gap-5">
                 <div class="flex flex-row gap-5">

@@ -7,7 +7,8 @@ use Illuminate\Http\Request;
 class SkillsTable extends Table
 {
     const API_URL = 'account.skills';
-    const SORT_BY = 'skill';
+    const SORT_BY = 'total_score';
+    const SORT_DESC = true;
     const PER_PAGE = 10;
 
     function getData(Request $request, bool $paginate = true, ...$params): array

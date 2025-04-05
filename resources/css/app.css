@@ -37,7 +37,7 @@
     }
 
     .hover-li{
-        @apply cursor-pointer block hover:bg-indigo-50 bg-transparent rounded p-1;
+        @apply cursor-pointer block hover:bg-indigo-50 bg-transparent rounded py-1 px-2;
     }
 
 }

@@ -9,9 +9,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
+use Laravel\Scout\Searchable;
 
 class Content extends Model
 {
+    use Searchable;
+
     protected $fillable = [
         'title',
         'content',
@@ -25,6 +28,11 @@ class Content extends Model
 
     const TYPE_VIDEO = 'video';
     const TYPE_ARTICLE = 'article';
+
+    const TYPES = [
+        self::TYPE_VIDEO,
+        self::TYPE_ARTICLE,
+    ];
 
     protected $appends = ['video_url', 'preview_url', 'views_count'];
 
@@ -43,7 +51,7 @@ class Content extends Model
                     Storage::disk('public')->delete($content->getOriginal('video'));
                 }
                 $videoFile = request()->file('video');
-                $info =  ContentService::saveVideo($videoFile);
+                $info = ContentService::saveVideo($videoFile);
                 $content->duration = $info['duration'];
                 $content->video = $info['path'];
             }
@@ -118,5 +126,24 @@ class Content extends Model
     public function contentSkills()
     {
         return $this->hasMany(ContentSkill::class, 'content_id');
+    }
+
+    public function searchableAs(): string
+    {
+        return 'content_index';
+    }
+
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => (string)$this->id, // to connect with typesense
+            'title' => $this->title,
+            'content' => $this->content,
+            'preview_url' => $this->preview_url,
+            'views_count' => $this->views_count,
+            'transcript' => $this->transcript?->text ?? '',
+            'date' => $this->created_at,
+            'created_at' => $this->created_at->timestamp,
+        ];
     }
 }

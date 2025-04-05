@@ -105,6 +105,8 @@ abstract class Table implements TableInterface
                 $requestData['sort_by'],
                 $direction
             );
+        } else {
+            $query = $query->orderBy(static::SORT_BY, static::SORT_DESC ? 'desc' : 'asc');
         }
         return $query;
     }

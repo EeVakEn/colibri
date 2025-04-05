@@ -46,4 +46,38 @@ class SubscriptionController extends Controller
         $currentUser->subscriptions()->where('channel_id', $channel->id)->delete();
         return response()->json(['success' => 'You have unsubscribed from this channel.', 'channel'=>$channel], 200);
     }
+
+    public function getSubscriptionsByChannel()
+    {
+        $user = auth()->user();
+        $channels = $user->channels;
+
+        $data = [];
+
+        foreach ($channels as $channel) {
+            $subscriptions = $channel->subscriptions()
+                ->where('subscriptions.created_at', '>=', now()->subDays(15))
+                ->select(
+                    \DB::raw('DATE(subscriptions.created_at) as date'),
+                    \DB::raw('COUNT(subscriptions.id) as count')
+                )
+                ->groupBy('date')
+                ->orderBy('date')
+                ->get();
+
+            $subscriptionData = $subscriptions->map(function ($subscription) {
+                return [
+                    'x' => $subscription->date,
+                    'y' => $subscription->count,
+                ];
+            });
+
+            $data[] = [
+                'label' => $channel->name,
+                'data' => $subscriptionData->toArray(),
+            ];
+        }
+
+        return response()->json($data);
+    }
 }

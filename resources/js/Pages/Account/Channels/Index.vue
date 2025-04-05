@@ -6,6 +6,7 @@ import {Link, router} from "@inertiajs/vue3";
 import {X, Check, ChevronDown} from 'lucide-vue-next'
 import Avatar from "@/UI/Avatar.vue";
 import Dropdown from "@/UI/Dropdown.vue";
+import SubscriptionChart from "@/UI/SubscriptionChart.vue";
 
 const tableRef = useTemplateRef('table');
 defineComponent({
@@ -40,6 +41,8 @@ export default {
             <h1 class="text-2xl font-bold">Channels</h1>
             <Link class="btn-primary" :href="route('account.channels.create')">Create New</Link>
         </div>
+
+        <SubscriptionChart></SubscriptionChart>
 
         <Table
             ref="table"
